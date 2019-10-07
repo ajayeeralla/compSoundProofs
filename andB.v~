@@ -1,0 +1,70 @@
+Load "IFMORPH".
+(******************andB properties***********)
+
+
+Lemma andB_TRue_iff :  forall b1 b2 : Bool, b1 & b2 ## TRue <-> b1 ## TRue /\ b2 ## TRue.
+
+Proof. split.
+intros.
+split.
+unfold andB in H.
+Admitted. 
+
+Lemma andB_FAlse_intro1 : forall b1 b2 : Bool, b1 ## FAlse -> b1 & b2 ## FAlse.
+
+Proof.
+intros.
+
+unfold andB .
+rewrite H.
+apply IFFALSE_B. 
+Qed.
+Lemma andB_FAlse_intro2 : forall b1 b2:Bool, b2 ## FAlse -> b1 & b2 ## FAlse.
+Proof. intros. unfold andB. rewrite H. apply IFSAME_B. Qed.
+
+Lemma andB_FAlse_r :  forall b:Bool, b & FAlse ## FAlse.
+
+Proof. intros.  unfold andB. apply IFSAME_B. Qed.
+
+Lemma andB_FAlse_l : forall b: Bool, FAlse & b ## FAlse.
+Proof. intros. unfold andB. apply IFFALSE_B. Qed.
+
+
+Lemma andB_diag : forall n, (Bvar n) & (Bvar n) ## (Bvar n).
+Proof.  intros. unfold andB. rewrite IFEVAL_B. simpl. 
+rewrite <- beq_nat_refl.
+ rewrite IFTF.
+reflexivity.
+Qed.
+
+
+Lemma andB_TRue_r : forall b:Bool, b & TRue ## b.
+
+Proof.  intros. unfold andB.
+pose proof (IFTF 1).
+apply Forall_ELM_EVAL_B with (n :=1)(b:=b) in H.
+simpl in H.
+apply H.  Qed.  
+
+Lemma andB_TRue_l : forall b:Bool,  TRue & b ## b.
+
+Proof.  intros. unfold andB.
+apply IFTRUE_B.
+   Qed.           
+
+Eval compute in notb.
+
+
+Lemma andB_notb_r : forall n, (Bvar n) & (notb (Bvar n)) ## FAlse.
+
+Proof. intros. unfold andB .  unfold notb.  rewrite IFEVAL_B. simpl. rewrite <- beq_nat_refl. 
+rewrite IFTRUE_B. rewrite IFSAME_B. reflexivity. Qed.
+
+
+Lemma andB_Comm: forall b1 b2 ,( b1 & b2)  ## (b2 & b1).
+
+Proof. intros. unfold andB.  rewrite <- IFTF with (n:= n2) at 1 . 
+
+rewrite IFMORPH_B1 with (n1:= n2) (n2:=n1). rewrite IFTF with (n:= n1). rewrite IFSAME_B. reflexivity. Qed.
+
+Lemma andB_assoc

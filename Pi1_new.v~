@@ -1,0 +1,1494 @@
+
+
+Load "Example20".
+Require Import Coq.omega.Omega.
+ Require Import Coq.Arith.Peano_dec.
+(*****************Real or random Secrecy*****************************************)
+(********************************************************************************)
+(******protocol Pi1 :The oracle reveals the actual Key if there is any*************)
+
+(********************************************************************************)
+
+
+Definition t10 := msg (G (N 0)).
+Definition t11 := msg (g (N 0)).
+Definition phi0 := [ t10; t11].
+Definition mphi0 := (conv_mylist_listm phi0).
+Definition grn1 := (exp (G (N 0)) (g (N 0)) (r (N 1))).
+Definition x1 := (f mphi0).
+(******start state****************)
+Definition qa0000:= (if_then_else_M (EQ_M (reveal x1) (i 1) ) O (if_then_else_M (EQ_M (reveal x1) (i 2) ) O (if_then_else_M ((EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)) grn1 (if_then_else_M (EQ_M (to x1) (i 1)) grn1 (if_then_else_M ((EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)) grn1 (if_then_else_M (EQ_M (to x1) (i 2)) grn1 O) ) )))).
+
+(************************)
+Definition t12:= msg qa0000.
+Definition phi1 := phi0 ++ [ t12 ].
+
+
+(***********************************************************)
+
+Definition mphi1 := (conv_mylist_listm phi1).
+Definition mx1rn1 := (exp (G (N 0)) (m x1) (r (N 1))).
+Definition mx1rn2 := (exp (G (N 0)) (m x1) (r (N 2))).
+Definition grn2:= (exp (G (N 0)) (g (N 0)) (r (N 2))).
+
+Definition x2 := (f mphi1).
+
+
+(**********qa0000 -> qa1000, qa0010, qa0100, qa0001*************************************************)
+
+Definition qa1000 := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 1)) acc (if_then_else_M (EQ_M (to x2) (i 2)) grn2 O)))).
+
+Definition qa0010:= (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) mx1rn1 (if_then_else_M ((EQ_M (to x2) (i 2)) & (EQ_M (act x2) new)) grn2 O ))).
+
+Definition qa0100 := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 2)) acc (if_then_else_M (EQ_M (to x2) (i 1)) grn2 O)))).
+
+Definition qa0001 :=(if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M ((EQ_M (reveal x2) (i 2) ) & (EQ_M (to x1) (i 2))) mx1rn1 (if_then_else_M ((EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)) grn2 O))).
+
+Definition t13 := msg (if_then_else_M (EQ_M (reveal x1) (i 1) ) O (if_then_else_M (EQ_M (reveal x1) (i 2) ) O (if_then_else_M ((EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)) qa1000 (if_then_else_M (EQ_M (to x1) (i 1)) qa0010 (if_then_else_M ((EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)) qa0100 (if_then_else_M (EQ_M (to x1) (i 2)) qa0001 O) ) )))).
+Definition phi2:= phi1 ++ [t13].
+
+Eval compute in t13.
+
+(***************************************************************************)
+
+Definition mphi2 := (conv_mylist_listm phi2).
+Definition mx2rn1 := (exp (G (N 0)) (m x2) (r (N 1))).
+Definition mx2rn2 := (exp (G (N 0)) (m x2) (r (N 2))).
+Definition grn3:= (exp (G (N 0)) (g (N 0)) (r (N 3))).
+Definition x3 := (f mphi2).
+
+
+
+(************* qa1000 -> qbar, qa2000, qa1100, qa1001, qbar*******************************************************)
+
+Definition qa2000 :=  (if_then_else_M (EQ_M (reveal x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))  mx2rn1 (if_then_else_M ((EQ_M (to  x3) (i 2)) & (EQ_M (act  x3) new)) grn3 (if_then_else_M (EQ_M (to  x3) (i 2)) grn3 O) ) ) ).
+
+Definition qa1100 := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M (EQ_M (to  x3) (i 1)) acc (if_then_else_M ((EQ_M (to  x3) (i 2)) ) acc O) ))).
+Definition qa1001 := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2)))  mx1rn1 (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2))) mx2rn2  (if_then_else_M (EQ_M (to  x3) (i 1)) acc O)))).
+
+(************qa0010 -> qbar, qa0020, qa0110,  qa0011, qbar *********************************************************)
+Definition qa0020 := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (to  x3) (i 2)) & (EQ_M (act x3) new)) grn3 (if_then_else_M (EQ_M (to  x3) (i 2)) grn3 O ))).
+Definition qa0110 := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  mx1rn1 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) mx2rn2  (if_then_else_M (EQ_M (to  x3) (i 2)) acc O)))).
+Definition qa0011 := (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  mx1rn1 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) mx2rn2  (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2)))  mx1rn1 (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2))) mx2rn2 O) ) ) ).
+
+(*****************qa0100 -> qbar, qa0200, qa1100, qa0110, qbar****************************************************)
+
+Definition qa0200 :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1 (if_then_else_M ((EQ_M (to  x3) (i 1)) & (EQ_M (act  x3) new)) grn3 (if_then_else_M (EQ_M (to  x3) (i 1)) grn3 O) ) ) ).
+
+(******************qa0001 -> qbar, qa0002, qa1001, qa0011, qbar****************************************************)
+Definition qa0002 :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (to  x3) (i 1) )& (EQ_M (act  x3) new) ) grn3 (if_then_else_M (EQ_M (to  x3) (i 1)) grn3 O))).
+
+(*****************************************************************************************************)
+
+Definition qa1000_s := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 1)) qa2000 (if_then_else_M (EQ_M (to x2) (i 2)) qa1001 O)))).
+
+Definition qa0010_s := (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qa0020 (if_then_else_M ((EQ_M (to x2) (i 2)) & (EQ_M (act x2) new)) qa0110  O) ) ).
+
+Definition qa0100_s := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 2)) qa0200 (if_then_else_M (EQ_M (to x2) (i 1)) qa0110 O)))).
+
+Definition qa0001_s := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M ((EQ_M (reveal x2) (i 2) ) & (EQ_M (to x1) (i 2))) qa0002 (if_then_else_M ((EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)) qa1001  O) ) ).
+
+Definition t14 := msg (if_then_else_M (EQ_M (reveal x1) (i 1) ) O (if_then_else_M (EQ_M (reveal x1) (i 2) ) O (if_then_else_M ((EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)) qa1000_s (if_then_else_M (EQ_M (to x1) (i 1)) qa0010_s (if_then_else_M ((EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)) qa0100_s (if_then_else_M (EQ_M (to x1) (i 2)) qa0001_s O) ) )))).
+
+Definition phi3:= phi2 ++ [t14]. 
+(***********************************************************************************************)
+Definition mx3rn1 := (exp (G (N 0)) (m x3) (r (N 1))).
+Definition mx3rn2 := (exp (G (N 0)) (m x3) (r (N 2))).
+Definition mx3rn3 := (exp (G (N 0)) (m x3) (r (N 3))).
+Definition mphi3 := (conv_mylist_listm phi3).
+Definition x4 := (f mphi3).
+Definition grn4:= (exp (G (N 0)) (g (N 0)) (r (N 4))).
+
+(********************qa2000 ->qbar, qa3000, qa2100, qa2001,qbar****************************************************)
+Definition qa3000 := (if_then_else_M (EQ_M (reveal  x4) (i 2) ) O (if_then_else_M (EQ_M (to  x4) (i 2)) grn4 O )).
+(*Definition qa2100 := (if_then_else_M (EQ_M (reveal  x4) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1 (if_then_else_M (EQ_M (to  x4) (i 2)) acc O ) )).*)
+Definition qa2001 :=  (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x1) (i 2))) mx1rn1  (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x3) (i 2))) mx3rn3 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1  O ))).
+(**************************qa1100 -> qbar, qa2100, qa1200, qbar *****************************************************)
+(**Definition qa1200 := (if_then_else_M (EQ_M (reveal  x4) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))  mx2rn1 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x2) new))   mx3rn2 (if_then_else_M (EQ_M (to  x4) (i 1)) acc O)) ) ).**)
+
+(******************************************************************************)
+(**qa1001---> qbar , q1002, 2001 ***************)
+Definition qa1002 := (if_then_else_M (EQ_M (reveal  x4) (i 1) ) O ( if_then_else_M (EQ_M (to x4) (i 1)) acc O)).
+
+(*********qa0110 -> qbar, q0120, 0210, qbar************)
+Definition qa0120 := (if_then_else_M (EQ_M (reveal  x4) (i 2) ) O ( if_then_else_M (EQ_M (to x2) (i 2)) acc O)).
+Definition qa0210 :=  (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x1) (i 1))) mx1rn1  (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1))) mx2rn2 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x2) new))   mx3rn2 O )))).
+(*********************************************************)
+
+(**************qa0011 -> qbar, q0021, q0012, qbar*******************)
+
+(*Definition qa0021 := (if_then_else_M (EQ_M (reveal  x4) (i 2) ) & (EQ_M ( to x1) (i 2)) mx1rn1 (if_then_else_M (EQ_M (reveal  x4) (i 2) ) & (EQ_M ( to x3) (i 2)) mx3rn3 O)).*)
+
+(*Definition qa0012 := (if_then_else_M (EQ_M (reveal  x4) (i 1) )& (EQ_M (to x1) (i 1)) mx1rn1 (if_then_else_M ( (EQ_M (reveal  x4) (i 1) )& (EQ_M (to x3) (i 1))) mx3rn1 O)).*)
+
+(************qa0200 -> qbar, qa0300, qa1200 , qa0210******)
+
+Definition qa0300 :=  (if_then_else_M (EQ_M (reveal  x4) (i 1) ) O (if_then_else_M (EQ_M (to x4) (i 1)) grn4 O)).
+(** qa0002 -> qbar qa1002, qa0012, qbar*********)
+
+(***qa0020 -> qbar qa0120, qa0021, qbar********)
+
+(*****************************qa1001 -> qa1002, qa2001***************************************************)
+
+Definition qa2000_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new)) qa3000 (if_then_else_M (EQ_M (to  x3) (i 2)) qa2001 O) ) ) .
+
+
+(**Definition qa1100_s := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M (EQ_M (to  x3) (i 1)) qa2100 (if_then_else_M ((EQ_M (to  x3) (i 2)) ) qa1200 O) ))).**)
+Definition qa1001_s := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2)))  qa1002 (if_then_else_M (EQ_M (to  x3) (i 1)) qa2001 O))).
+
+Definition qa0110_s := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0120 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0120  (if_then_else_M (EQ_M (to  x3) (i 2)) qa0210 O)))).
+(**Definition qa0011_s := (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0021 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0021  (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2))) qa0012 (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2))) qa0012 O) ) ) ).**)
+
+Definition qa0020_s := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (to  x3) (i 2)) & (EQ_M (act x3) new)) qa0120 O )).
+Definition qa0200_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   qa0300 (if_then_else_M (EQ_M (to  x3) (i 1)) qa0210 O) ) ).
+
+
+
+Definition qa0002_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (to  x3) (i 1) )& (EQ_M (act  x3) new) ) qa1002 O)).
+
+
+(***********************************************************************************************************)
+
+
+Definition qa1000_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 1)) qa2000_s (if_then_else_M (EQ_M (to x2) (i 2)) qa1001_s O)))).
+
+Definition qa0010_ss := (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qa0020_s (if_then_else_M ((EQ_M (to x2) (i 2)) & (EQ_M (act x2) new)) qa0110_s O ) ) ).
+
+Definition qa0100_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 2)) qa0200_s (if_then_else_M (EQ_M (to x2) (i 1)) qa0110_s O)))).
+
+Definition qa0001_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qa0002_s (if_then_else_M ((EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)) qa1001_s O ) ) ).
+
+Definition t15 := msg (if_then_else_M (EQ_M (reveal x1) (i 1) ) O (if_then_else_M (EQ_M (reveal x1) (i 2) ) O (if_then_else_M ((EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)) qa1000_ss (if_then_else_M (EQ_M (to x1) (i 1)) qa0010_ss (if_then_else_M ((EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)) qa0100_ss (if_then_else_M (EQ_M (to x1) (i 2)) qa0001_ss O) ) )))).
+
+Definition phi4 :=  phi3 ++ [ t15 ]. 
+
+(***********************************************************************************************************)
+Definition mx4rn3 := (exp (G (N 0)) (m x4) (r (N 3))).
+Definition mx4rn4 := (exp (G (N 0)) (m x4) (r (N 4))).
+Definition mphi4 := (conv_mylist_listm phi4).
+Definition x5 := (f mphi4).
+(********************qa2100 -> qa2200, qa3100************************************)
+
+(**Definition qa2200 := (if_then_else_M ((EQ_M (reveal x5) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1 (if_then_else_M ((EQ_M (reveal x5) (i 2) ) & (EQ_M (to  x4) (i 2)) &(EQ_M (to  x3) (i 2)) & (notb (EQ_M ( act x4) new)) &(EQ_M (act  x3) new))   mx4rn3 O)).*)
+
+Definition qa0220 := (if_then_else_M ((EQ_M (reveal  x5) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new)) mx2rn1 (if_then_else_M ((EQ_M (reveal  x5) (i 2) ) & (EQ_M (to x4) (i 2)) &(EQ_M (to x3) (i 2)) & (notb (EQ_M ( act x4) new)) &(EQ_M (act x3) new)) mx4rn3 O)).
+
+Definition qa2002:= (if_then_else_M ((EQ_M (reveal  x5) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new)) mx2rn1 (if_then_else_M ((EQ_M (reveal  x5) (i 2) ) & (EQ_M (to x3) (i 2)) &(EQ_M (to x2) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x2) new)) mx3rn2 O)).
+
+Definition qa0022 := O. 
+Definition qa3100 := (if_then_else_M (EQ_M (reveal x5) (i 1)) O (if_then_else_M (EQ_M (to x5) (i 2)) acc O)).
+
+Definition qa3001 := (if_then_else_M (EQ_M (reveal x5) (i 2)) & (EQ_M (to x1) (i 2)) mx1rn1  (if_then_else_M (EQ_M (reveal x5) (i 2)) & (EQ_M (to x2) (i 2)) mx2rn2  (if_then_else_M (EQ_M (reveal x5) (i 2)) & (EQ_M (to x4) (i 2)) mx4rn4 O ))).
+
+Definition qa1300 := (if_then_else_M (EQ_M (reveal x5) (i 1)) O (if_then_else_M (EQ_M (to x5) (i 1)) acc O )).
+Definition qa0310 :=  (if_then_else_M (EQ_M (reveal x5) (i 1)) & (EQ_M (to x1) (i 1)) mx1rn1  (if_then_else_M (EQ_M (reveal x5) (i 1)) & (EQ_M (to x2) (i 1)) mx2rn2  (if_then_else_M (EQ_M (reveal x5) (i 1)) & (EQ_M (to x4) (i 1)) mx4rn4 O ))).
+(**********************************************************************)
+(*Definition qa2100_s := (if_then_else_M (EQ_M (reveal  x4) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   O (if_then_else_M (EQ_M (to  x4) (i 2)) qa2200 O ) )).
+
+Definition qa1200_s := (if_then_else_M (EQ_M (reveal  x4) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))  O (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x2) new))  O (if_then_else_M (EQ_M (to  x4) (i 1)) qa2200 O)) ) ).*)
+
+Definition qa2001_s :=  (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   O (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to  x3) (i 1)) &(EQ_M (to x2) (i 1)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x2) new))   O O )).
+Definition qa0210_s :=  (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))  O O ).
+Definition qa0120_s := (if_then_else_M (EQ_M (reveal  x4) (i 1) ) O ( if_then_else_M (EQ_M (to x2) (i 2)) O O)).
+(*Definition qa0021_s := (if_then_else_M (EQ_M (reveal  x4) (i 2) ) & (EQ_M ( to x1) (i 2)) qa0022 (if_then_else_M (EQ_M (reveal  x4) (i 2) ) & (EQ_M ( to x3) (i 2)) qa0022 O)).*)
+
+Definition qa3000_s := (if_then_else_M (EQ_M (reveal  x4) (i 2) ) O (if_then_else_M ((EQ_M (to x4) (i 2)) & (EQ_M (act x4) new)) qa3100 (if_then_else_M (EQ_M (to  x4) (i 2)) qa3001 O ))).
+
+Definition qa0300_s :=  (if_then_else_M (EQ_M (reveal  x4) (i 1) ) O (if_then_else_M (EQ_M (to x4) (i 1)) & (EQ_M (act x4) new)  qa1300 (if_then_else_M (EQ_M (to x4) (i 1)) qa0310 O))).
+  (*Definition qa0012_s := (if_then_else_M (EQ_M (reveal  x4) (i 1) )& (EQ_M (to x1) (i 1)) qa0022 (if_then_else_M ( (EQ_M (reveal  x4) (i 1) )& (EQ_M (to x3) (i 1))) qa0022 O)).*)
+ Definition qa1002_s := (if_then_else_M (EQ_M (reveal  x4) (i 1) ) O ( if_then_else_M (EQ_M (to x4) (i 1)) qa2002 O)).
+(********************************************************************************)
+Definition qa2000_ss :=  (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new)) qa3000_s (if_then_else_M (EQ_M (to  x3) (i 2)) qa2001_s O) ) ).
+
+(*
+Definition qa1100_ss := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M (EQ_M (to  x3) (i 1)) qa2100_s (if_then_else_M ((EQ_M (to  x3) (i 2)) ) qa1200_s O) ))).*)
+Definition qa1001_ss := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2)))  O (if_then_else_M (EQ_M (to  x3) (i 1)) qa2001_s O))).
+
+Definition qa0110_ss := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0120_s (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0120_s  (if_then_else_M (EQ_M (to  x3) (i 2)) qa0210_s O)))).
+
+Definition qa0200_ss :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   qa0300_s (if_then_else_M (EQ_M (to  x3) (i 1)) qa0210_s O) )).
+
+Definition qa0020_ss := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (to  x3) (i 2)) & (EQ_M (act x3) new)) qa0120_s O )).
+
+Definition qa0002_ss :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (to  x3) (i 1) )& (EQ_M (act  x3) new) ) qa1002_s  O)).
+(*Definition qa0011_ss := (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0021_s (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0021_s  (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2))) qa0012_s (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2))) qa0012_s O) ) ) ).*)
+(**********************************************************************************************)
+
+Definition qa1000_sss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 1)) qa2000_ss (if_then_else_M (EQ_M (to x2) (i 2)) qa1001_ss O)))).
+
+Definition qa0010_sss := (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qa0020_ss (if_then_else_M ((EQ_M (to x2) (i 2)) & (EQ_M (act x2) new)) qa0110_ss O ) ) ).
+
+Definition qa0100_sss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 2)) qa0200_ss (if_then_else_M (EQ_M (to x2) (i 1)) qa0110_ss O)))).
+
+Definition qa0001_sss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qa0002_ss (if_then_else_M ((EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)) qa1001_ss O ) ) ).
+
+
+Definition t16 := msg (if_then_else_M (EQ_M (reveal x1) (i 1) ) O (if_then_else_M (EQ_M (reveal x1) (i 2) ) O (if_then_else_M ((EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)) qa1000_sss (if_then_else_M (EQ_M (to x1) (i 1)) qa0010_sss (if_then_else_M ((EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)) qa0100_sss (if_then_else_M (EQ_M (to x1) (i 2)) qa0001_sss O) ) )))).
+Definition phi5  := phi4 ++ [ t16].
+
+
+
+
+
+(******************************************************************************************************************************************************)
+(******************************************************************************************************************************************************)
+(***********************protocol Pi2 : add transitions to qa2001************)
+(***************************************************************************)
+
+
+
+Definition phi21 := phi1.
+Definition phi22 := phi2.
+Definition phi23 := phi3.
+
+
+
+Definition qb2001 := (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 1)) &(EQ_M (to x2) (i 2))&(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2))   grn4 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to  x3) (i 1)) &(EQ_M (to x2) (i 2))&(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2))   grn4 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x1) (i 2))) mx1rn1  (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x3) (i 2))) mx3rn3 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1  O ) ) ) ) ).
+
+Definition qb0210 := (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 1))&(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2))   grn4 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 1))&(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2))   grn4 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x1) (i 1))) mx1rn1  (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1))) mx2rn2 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x2) new))   mx3rn2 O ) ))))).
+
+
+(********************************************************************************)
+Definition qb2000_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new)) qa3000 (if_then_else_M (EQ_M (to  x3) (i 2)) qb2001 O) ) ).
+
+(*
+Definition qb1100_s := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M (EQ_M (to  x3) (i 1)) qa2100 (if_then_else_M ((EQ_M (to  x3) (i 2)) ) qa1200 O) ))).*)
+Definition qb1001_s := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2)))  qa1002 (if_then_else_M (EQ_M (to  x3) (i 1)) qb2001 O))).
+
+Definition qb0110_s := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0120 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0120  (if_then_else_M (EQ_M (to  x3) (i 2)) qb0210 O)))).
+(*Definition qb0011_s := (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0021 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0021  (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2))) qa0012 (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2))) qa0012 O) ) ) ).*)
+
+Definition qb0020_s := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (to  x3) (i 2)) & (EQ_M (act x3) new)) qa0120  O )).
+Definition qb0200_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   qa0300 (if_then_else_M (EQ_M (to  x3) (i 1)) qb0210 O) ) ) .
+
+
+
+Definition qb0002_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (to  x3) (i 1) )& (EQ_M (act  x3) new) ) qa1002  O)).
+
+
+(***********************************************************************************************************)
+
+
+Definition qb1000_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 1)) qb2000_s (if_then_else_M (EQ_M (to x2) (i 2)) qb1001_s O)))).
+
+Definition qb0010_ss := (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qb0020_s (if_then_else_M ((EQ_M (to x2) (i 2)) & (EQ_M (act x2) new)) qb0110_s  O ) ) ).
+
+Definition qb0100_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 2)) qb0200_s (if_then_else_M (EQ_M (to x2) (i 1)) qb0110_s O)))).
+
+Definition qb0001_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qb0002_s (if_then_else_M ((EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)) qb1001_s O ) ) ).
+
+Definition t25 := msg (if_then_else_M (EQ_M (reveal x1) (i 1) ) O (if_then_else_M (EQ_M (reveal x1) (i 2) ) O (if_then_else_M ((EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)) qb1000_ss (if_then_else_M (EQ_M (to x1) (i 1)) qb0010_ss (if_then_else_M ((EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)) qb0100_ss (if_then_else_M (EQ_M (to x1) (i 2)) qb0001_ss O) ) )))).
+
+Definition phi24 :=  phi3 ++ [ t25 ]. 
+
+
+(************************************************************************************)
+(************************************************************************************)
+(************************Protocol Pi2'': replace the output grn4 by mx12rn2 , mx13rn1 in the term qb2001 in Pi2**********)
+(************************************************************************************************************************)
+
+
+
+Definition phi31 := phi1.
+Definition phi32 := phi2.
+Definition phi33 := phi3.
+
+
+Definition qc2001 := (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 1)) &(EQ_M (to x2) (i 2))&(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2))   mx2rn2 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to  x3) (i 1)) &(EQ_M (to x2) (i 2))&(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2))   mx3rn1 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x1) (i 2))) mx1rn1  (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x3) (i 2))) mx3rn3 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1  O ) ) ) ) ).
+
+Definition qc0210 := (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 1))&(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2))   mx2rn2 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 1))&(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2)) mx3rn1 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x1) (i 1))) mx1rn1  (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1))) mx2rn2 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x2) new))   mx3rn2 O ) ))))).
+
+
+(********************************************************************************)
+Definition qc2000_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new)) qa3000 (if_then_else_M (EQ_M (to  x3) (i 2)) qc2001 O) )  ).
+
+(*
+
+Definition qc1100_s := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M (EQ_M (to  x3) (i 1)) qa2100 (if_then_else_M ((EQ_M (to  x3) (i 2)) ) qa1200 O) ))).*)
+Definition qc1001_s := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2)))  qa1002 (if_then_else_M (EQ_M (to  x3) (i 1)) qc2001 O))).
+
+Definition qc0110_s := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0120 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0120  (if_then_else_M (EQ_M (to  x3) (i 2)) qc0210 O)))).
+(*Definition qc0011_s := (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0021 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0021  (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2))) qa0012 (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2))) qa0012 O) ) ) ).*)
+
+Definition qc0020_s := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (to  x3) (i 2)) & (EQ_M (act x3) new)) qa0120 O )).
+Definition qc0200_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   qa0300 (if_then_else_M (EQ_M (to  x3) (i 1)) qc0210 O) ) ) .
+
+
+
+Definition qc0002_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (to  x3) (i 1) )& (EQ_M (act  x3) new) ) qa1002  O)).
+
+
+(***********************************************************************************************************)
+
+
+Definition qc1000_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 1)) qc2000_s (if_then_else_M (EQ_M (to x2) (i 2)) qc1001_s O)))).
+
+Definition qc0010_ss := (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qc0020_s (if_then_else_M ((EQ_M (to x2) (i 2)) & (EQ_M (act x2) new)) qc0110_s O ) ) ).
+
+Definition qc0100_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 2)) qc0200_s (if_then_else_M (EQ_M (to x2) (i 1)) qc0110_s O)))).
+
+Definition qc0001_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qc0002_s (if_then_else_M ((EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)) qc1001_s O ) ) ).
+
+Definition t35 := msg (if_then_else_M (EQ_M (reveal x1) (i 1) ) O (if_then_else_M (EQ_M (reveal x1) (i 2) ) O (if_then_else_M ((EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)) qc1000_ss (if_then_else_M (EQ_M (to x1) (i 1)) qc0010_ss (if_then_else_M ((EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)) qc0100_ss (if_then_else_M (EQ_M (to x1) (i 2)) qc0001_ss O) ) )))).
+
+Definition phi34 :=  phi3 ++ [ t35 ]. 
+
+
+(******************************Protocol Pi2' : replace the output grn4 by grn21 in the term qb2001 in Pi2********)
+
+(****************************************************************************************************************)
+
+Definition grn21:= (exp (G (N 0)) (exp (G (N 0)) (g (N 0)) (r (N 2))) (r (N 1))).
+Definition phi41 := phi1.
+Definition phi42 := phi2.
+Definition phi43 := phi3.
+
+
+
+Definition qd2001 := (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 1)) &(EQ_M (to x2) (i 2))&(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2)) grn21 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to  x3) (i 1)) &(EQ_M (to x2) (i 2))&(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2))  grn21 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x1) (i 2))) mx1rn1  (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x3) (i 2))) mx3rn3 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1  O ) ) ) ) ).
+
+Definition qd0210 := (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 1))&(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2)) grn21 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 1))&(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x1) new) &(EQ_M (m x2) grn1) &(EQ_M (m  x3) grn2)) grn21 (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x1) (i 1))) mx1rn1  (if_then_else_M ((EQ_M (reveal  x4) (i 1) ) & (EQ_M (to x2) (i 1))) mx2rn2 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   mx2rn1 (if_then_else_M ((EQ_M (reveal  x4) (i 2) ) & (EQ_M (to  x3) (i 2)) &(EQ_M (to x2) (i 2)) & (notb (EQ_M ( act x3) new)) &(EQ_M (act x2) new))   mx3rn2 O ) ))))).
+
+
+(********************************************************************************)
+Definition qd2000_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1)) &(EQ_M (to x1) (i 1)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new)) qa3000 (if_then_else_M (EQ_M (to  x3) (i 2)) qd2001 O) ) ) .
+
+
+(*Definition qd1100_s := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M (EQ_M (to  x3) (i 1)) qa2100 (if_then_else_M ((EQ_M (to  x3) (i 2)) ) qa1200 O) ))).*)
+Definition qd1001_s := (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2)))  qa1002 (if_then_else_M (EQ_M (to  x3) (i 1)) qd2001 O))).
+
+Definition qd0110_s := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0120 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0120  (if_then_else_M (EQ_M (to  x3) (i 2)) qd0210 O)))).
+(*Definition qd0011_s := (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x1) (i 1)))  qa0021 (if_then_else_M ((EQ_M (reveal  x3) (i 1) ) & (EQ_M (to x2) (i 1))) qa0021  (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x1) (i 2))) qa0012 (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2))) qa0012 O) ) ) ).*)
+
+Definition qd0020_s := (if_then_else_M (EQ_M (reveal  x3) (i 2) ) O (if_then_else_M ((EQ_M (to  x3) (i 2)) & (EQ_M (act x3) new)) qa0120  O )).
+Definition qd0200_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (reveal  x3) (i 2) ) & (EQ_M (to x2) (i 2)) &(EQ_M (to x1) (i 2)) & (notb (EQ_M ( act x2) new)) &(EQ_M (act x1) new))   qa0300 (if_then_else_M (EQ_M (to  x3) (i 1)) qd0210 O) ) ) .
+
+
+
+Definition qd0002_s :=  (if_then_else_M (EQ_M (reveal  x3) (i 1) ) O (if_then_else_M ((EQ_M (to  x3) (i 1) )& (EQ_M (act  x3) new) ) qa1002 O)).
+
+
+(***********************************************************************************************************)
+
+
+Definition qd1000_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 1)) qd2000_s  (if_then_else_M (EQ_M (to x2) (i 2)) qd1001_s O)))).
+
+Definition qd0010_ss := (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qd0020_s (if_then_else_M ((EQ_M (to x2) (i 2)) & (EQ_M (act x2) new)) qd0110_s O ) ) ).
+
+Definition qd0100_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M (EQ_M (reveal x2) (i 2) ) O (if_then_else_M (EQ_M (to x2) (i 2)) qd0200_s (if_then_else_M (EQ_M (to x2) (i 1)) qd0110_s O)))).
+
+Definition qd0001_ss := (if_then_else_M (EQ_M (reveal x2) (i 1) ) O (if_then_else_M ((EQ_M (reveal x2) (i 1) ) & (EQ_M (to x1) (i 1))) qd0002_s (if_then_else_M ((EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)) qd1001_s  O ) ) ).
+
+Definition t45 := msg (if_then_else_M (EQ_M (reveal x1) (i 1) ) O (if_then_else_M (EQ_M (reveal x1) (i 2) ) O (if_then_else_M ((EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)) qd1000_ss (if_then_else_M (EQ_M (to x1) (i 1)) qd0010_ss (if_then_else_M ((EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)) qd0100_ss (if_then_else_M (EQ_M (to x1) (i 2)) qd0001_ss O) ) )))).
+
+Definition phi44 :=  phi3 ++ [ t45 ]. 
+
+(***************************************************************************************************)
+(**************************************************************************************************)
+
+Theorem mor_eval_andB : forall (n1 : nat) (t1 t2:message), (if_then_else_M (Bvar n1)& (Bvar (n1+1)) t1 t2) #
+(if_then_else_M (Bvar n1) (if_then_else_M (Bvar (n1+1)) ((n1+1):=TRue)((n1:=TRue)t1) ((n1+1):=FAlse)((n1:=TRue)t2)) (((n1:=FAlse)t2))).
+
+Proof. intros.
+
+unfold andB.
+rewrite <- IFSAME_M with (b:= (Bvar n1)) (x:=  (if_then_else_M (if_then_else_B (Bvar n1) (Bvar (n1+1)) FAlse) t1 t2)) .
+rewrite IFEVAL_M .
+simpl.
+rewrite <- beq_nat_refl.
+rewrite IFTRUE_B.
+rewrite IFFALSE_B.
+rewrite IFFALSE_M.
+assert(H: (beq_nat (n1+1) n1 = false)).
+rewrite Nat.eqb_sym.
+induction n1.
+reflexivity.
+simpl. auto.
+rewrite H.
+
+rewrite IFEVAL_M with (n:= (n1+1)).
+reflexivity.
+Qed.
+
+ 
+Theorem RRS1: phi1 ~ phi31.
+
+Proof.
+  
+repeat unfold phi1, phi31, phi0. repeat unfold t10, t11, t12. simpl.
+unfold qa0000.
+
+pose proof(mor_eval_andB 1  grn1   (if_then_else_M (Bvar 1) grn1
+                  (if_then_else_M (EQ_M (to x1) (i 2)) & (Bvar 2)
+                     grn1 (if_then_else_M (EQ_M (to x1) (i 2)) grn1 O)))).
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 1))) in H.
+ simpl in H.
+
+rewrite IFTRUE_M in H.
+rewrite IFFALSE_M in H.
+apply Forall_ELM_EVAL_M with (n:=2) (x:=  (EQ_M (act x1) new)) in H.
+ simpl in H.
+rewrite (IFSAME_M _ (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))) in H.
+rewrite H .
+
+pose proof(mor_eval_andB 1    (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))  (if_then_else_M (Bvar 1)
+                     (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1))) O)).
+simpl in H0.
+
+rewrite IFTRUE_M in H0.
+
+rewrite IFFALSE_M in H0.
+
+rewrite IFSAME_M with (x:= (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))) in H0.
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 2))) in H0.
+ simpl in H0.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x1) new)) in H0.
+ simpl in H0.
+
+rewrite H0 .
+
+reflexivity.
+Qed.
+
+Axiom simpl_ifmorph: forall (n1 n2:nat) (m1 m2 m3: message), (if_then_else_M (Bvar n1) m1 (if_then_else_M  (Bvar n2) m2 m3)) # (if_then_else_M (Bvar n1) ((n1:= TRue)m1) (if_then_else_M  (Bvar n2) ((n1:=FAlse) (n2:= TRue) m2)  ((n1:=FAlse) (n2:= FAlse) m3) )).
+
+
+Theorem RRS2: phi2 ~ phi32.
+
+Proof.
+  
+repeat unfold phi2, phi1, phi31, phi32, phi0. repeat unfold t10, t11, t12, t13. simpl.
+unfold qa0000.
+
+pose proof(mor_eval_andB 1  grn1   (if_then_else_M (Bvar 1) grn1
+                  (if_then_else_M (EQ_M (to x1) (i 2)) & (Bvar 2)
+                     grn1 (if_then_else_M (EQ_M (to x1) (i 2)) grn1 O)))).
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 1))) in H.
+ simpl in H.
+
+rewrite IFTRUE_M in H.
+rewrite IFFALSE_M in H.
+apply Forall_ELM_EVAL_M with (n:=2) (x:=  (EQ_M (act x1) new)) in H.
+ simpl in H.
+rewrite (IFSAME_M _ (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))) in H.
+rewrite H .
+
+pose proof(mor_eval_andB 1    (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))  (if_then_else_M (Bvar 1)
+                     (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1))) O)).
+simpl in H0.
+
+rewrite IFTRUE_M in H0.
+
+rewrite IFFALSE_M in H0.
+
+rewrite IFSAME_M with (x:= (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))) in H0.
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 2))) in H0.
+ simpl in H0.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x1) new)) in H0.
+ simpl in H0.
+
+rewrite H0 .
+clear H. clear H0.
+
+unfold qa1000, qa0010, qa0100, qa0001.
+(**********(EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)**********)
+pose proof (mor_eval_andB 1  (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                 (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                    (if_then_else_M (EQ_M (to x2) (i 1)) acc
+                       (if_then_else_M (EQ_M (to x2) (i 2)) grn2 O)))) 
+(if_then_else_M (Bvar 1)
+                  (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                     (if_then_else_M
+                        (EQ_M (reveal x2) (i 1)) & (Bvar 1)
+                        mx1rn1
+                        (if_then_else_M
+                           (EQ_M (to x2) (i 2)) & (EQ_M (act x2) new) grn2 O)))
+                  (if_then_else_M (EQ_M (to x1) (i 2)) & (Bvar 2)
+                     (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                        (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                           (if_then_else_M (EQ_M (to x2) (i 2)) acc
+                              (if_then_else_M (EQ_M (to x2) (i 1)) grn2 O))))
+                     (if_then_else_M (EQ_M (to x1) (i 2))
+                        (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                           (if_then_else_M
+                              (EQ_M (reveal x2) (i 2)) & (EQ_M (to x1) (i 2))
+                              mx1rn1
+                              (if_then_else_M
+                                 (EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)
+                                 grn2 O))) O)))).
+
+simpl in H. rewrite IFTRUE_M in H. rewrite IFFALSE_M in H. 
+pose proof(IFTF 3).
+
+apply Forall_ELM_EVAL_B with (n:=3) (b:= (EQ_M (reveal (f mphi1)) (i 1)) ) in H0. simpl in H0.
+rewrite H0 in H.
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 1))) in H.
+ simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x1) new)) in H.
+ simpl in H.
+
+rewrite H.
+
+(**********(EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)**********)
+pose proof (mor_eval_andB 1  (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                        (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                           (if_then_else_M (EQ_M (to x2) (i 2)) acc
+                              (if_then_else_M (EQ_M (to x2) (i 1)) grn2 O))))
+(if_then_else_M (Bvar 1)
+                        (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                           (if_then_else_M
+                              (EQ_M (reveal x2) (i 2)) & (Bvar 1)
+                              mx1rn1
+                              (if_then_else_M
+                                 (EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)
+                                 grn2 O))) O)).
+
+simpl in H1. rewrite IFTRUE_M in H1.
+ rewrite IFFALSE_M in H1.  
+pose proof(IFTF 3).
+
+apply Forall_ELM_EVAL_B with (n:=3) (b:= (EQ_M (reveal (f mphi1)) (i 2)) ) in H2. simpl in H2.
+rewrite H2 in H1.
+clear H2.
+clear H0.
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 2))) in H1.
+ simpl in H1.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x1) new)) in H1.
+ simpl in H1.
+
+
+
+
+rewrite H1.
+clear H. clear H1.
+(**************************************)
+(*********** (EQ_M (to (f mphi1)) (i 2)) &   (EQ_M (act (f mphi1)) new)*****)
+
+pose proof (mor_eval_andB 1  (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0)))
+                             (r (N 2))) O).
+
+simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x2) (i 2))) in H.
+ simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x2) new)) in H.
+ simpl in H.
+rewrite H.
+clear H.
+
+(***********************(EQ_M (to (f mphi1)) (i 1))
+                                (EQ_M (act (f mphi1)) new) ***************)
+
+pose proof (mor_eval_andB 1  (exp (pi1 (ggen (N 0))) 
+                                (pi2 (ggen (N 0))) 
+                                (r (N 2))) O).
+
+simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x2) (i 1))) in H.
+ simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x2) new)) in H.
+ simpl in H.
+unfold  mphi1. simpl. unfold qa0000.
+(******************** (EQ_M (reveal x1) (i 1))***(EQ_M (reveal x1) (i 2))*************)
+
+pose proof(simpl_ifmorph 0 1 O O  
+     
+            (if_then_else_M (EQ_M (to (f mphi0)) (i 1))
+               (if_then_else_M (EQ_M (act x1) new)
+                  (if_then_else_M
+                     (EQ_M
+                        (reveal
+                           (f
+                              [G (N 0); g (N 0);
+                              if_then_else_M(Bvar 0) O
+                                (if_then_else_M (Bvar 1) O
+                                   (if_then_else_M
+                                      (EQ_M (to x1) (i 1)) &
+                                      (EQ_M (act x1) new) grn1
+                                      (if_then_else_M 
+                                         (EQ_M (to x1) (i 1)) grn1
+                                         (if_then_else_M
+                                            (EQ_M (to x1) (i 2)) &
+                                            (EQ_M (act x1) new) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                        (i 1)) O
+                     (if_then_else_M
+                        (EQ_M
+                           (reveal
+                              (f
+                                 [G (N 0); g (N 0);
+                                 if_then_else_M(Bvar 0) O
+                                   (if_then_else_M 
+                                      (Bvar 1) O
+                                      (if_then_else_M
+                                         (EQ_M (to x1) (i 1)) &
+                                         (EQ_M (act x1) new) grn1
+                                         (if_then_else_M 
+                                            (EQ_M (to x1) (i 1)) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 2)) &
+                                               (EQ_M (act x1) new) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                           (i 2)) O
+                        (if_then_else_M
+                           (EQ_M
+                              (to
+                                 (f
+                                    [G (N 0); g (N 0);
+                                    if_then_else_M 
+                                     (Bvar 0) O
+                                      (if_then_else_M
+                                         (Bvar 1) O
+                                         (if_then_else_M
+                                            (EQ_M (to x1) (i 1)) &
+                                            (EQ_M (act x1) new) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 1)) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                              (i 1)) acc
+                           (if_then_else_M
+                              (EQ_M
+                                 (to
+                                    (f
+                                       [G (N 0); g (N 0);
+                                       if_then_else_M
+                                        (Bvar 0) O
+                                         (if_then_else_M
+                                            (Bvar 1) O
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 1)) &
+                                               (EQ_M (act x1) new) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 1)) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                                 (i 2))
+                              (exp (pi1 (ggen (N 0))) 
+                                 (pi2 (ggen (N 0))) 
+                                 (r (N 2))) O))))
+                  (if_then_else_M
+                     (EQ_M
+                        (reveal
+                           (f
+                              [G (N 0); g (N 0);
+                              if_then_else_M(Bvar 0) O
+                                (if_then_else_M (Bvar 1) O
+                                   (if_then_else_M
+                                      (EQ_M (to x1) (i 1)) &
+                                      (EQ_M (act x1) new) grn1
+                                      (if_then_else_M 
+                                         (EQ_M (to x1) (i 1)) grn1
+                                         (if_then_else_M
+                                            (EQ_M (to x1) (i 2)) &
+                                            (EQ_M (act x1) new) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                        (i 2)) O
+                     (if_then_else_M
+                        (EQ_M
+                           (reveal
+                              (f
+                                 [G (N 0); g (N 0);
+                                 if_then_else_M(Bvar 0) O
+                                   (if_then_else_M 
+                                      (Bvar 1) O
+                                      (if_then_else_M
+                                         (EQ_M (to x1) (i 1)) &
+                                         (EQ_M (act x1) new) grn1
+                                         (if_then_else_M 
+                                            (EQ_M (to x1) (i 1)) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 2)) &
+                                               (EQ_M (act x1) new) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                           (i 1))
+                        (exp (pi1 (ggen (N 0))) (m (f mphi0)) (r (N 1)))
+                        (if_then_else_M
+                           (EQ_M
+                              (to
+                                 (f
+                                    [G (N 0); g (N 0);
+                                    if_then_else_M 
+                                     (Bvar 0) O
+                                      (if_then_else_M
+                                         (Bvar 1) O
+                                         (if_then_else_M
+                                            (EQ_M (to x1) (i 1)) &
+                                            (EQ_M (act x1) new) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 1)) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                              (i 2))
+                           (if_then_else_M (EQ_M (act x2) new)
+                              (exp (pi1 (ggen (N 0))) 
+                                 (pi2 (ggen (N 0))) 
+                                 (r (N 2))) O) O))))
+               (if_then_else_M (EQ_M (to (f mphi0)) (i 2))
+                  (if_then_else_M (EQ_M (act x1) new)
+                     (if_then_else_M
+                        (EQ_M
+                           (reveal
+                              (f
+                                 [G (N 0); g (N 0);
+                                 if_then_else_M(Bvar 0) O
+                                   (if_then_else_M 
+                                      (Bvar 1) O
+                                      (if_then_else_M
+                                         (EQ_M (to x1) (i 1)) &
+                                         (EQ_M (act x1) new) grn1
+                                         (if_then_else_M 
+                                            (EQ_M (to x1) (i 1)) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 2)) &
+                                               (EQ_M (act x1) new) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                           (i 1)) O
+                        (if_then_else_M
+                           (EQ_M
+                              (reveal
+                                 (f
+                                    [G (N 0); g (N 0);
+                                    if_then_else_M 
+                                     (Bvar 0) O
+                                      (if_then_else_M
+                                         (Bvar 1) O
+                                         (if_then_else_M
+                                            (EQ_M (to x1) (i 1)) &
+                                            (EQ_M (act x1) new) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 1)) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                              (i 2)) O
+                           (if_then_else_M
+                              (EQ_M
+                                 (to
+                                    (f
+                                       [G (N 0); g (N 0);
+                                       if_then_else_M
+                                        (Bvar 0) O
+                                         (if_then_else_M
+                                            (Bvar 1) O
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 1)) &
+                                               (EQ_M (act x1) new) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 1)) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                                 (i 2)) acc
+                              (if_then_else_M
+                                 (EQ_M
+                                    (to
+                                       (f
+                                          [G (N 0); 
+                                          g (N 0);
+                                          if_then_else_M
+                                           (Bvar 0) O
+                                            (if_then_else_M
+                                               (Bvar 1) O
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 1)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 1)) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                                    (i 1))
+                                 (exp (pi1 (ggen (N 0))) 
+                                    (pi2 (ggen (N 0))) 
+                                    (r (N 2))) O))))
+                     (if_then_else_M
+                        (EQ_M
+                           (reveal
+                              (f
+                                 [G (N 0); g (N 0);
+                                 if_then_else_M(Bvar 0) O
+                                   (if_then_else_M 
+                                      (Bvar 1) O
+                                      (if_then_else_M
+                                         (EQ_M (to x1) (i 1)) &
+                                         (EQ_M (act x1) new) grn1
+                                         (if_then_else_M 
+                                            (EQ_M (to x1) (i 1)) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 2)) &
+                                               (EQ_M (act x1) new) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                           (i 1)) O
+                        (if_then_else_M
+                           (EQ_M
+                              (reveal
+                                 (f
+                                    [G (N 0); g (N 0);
+                                    if_then_else_M 
+                                     (Bvar 0) O
+                                      (if_then_else_M
+                                         (Bvar 1) O
+                                         (if_then_else_M
+                                            (EQ_M (to x1) (i 1)) &
+                                            (EQ_M (act x1) new) grn1
+                                            (if_then_else_M
+                                               (EQ_M (to x1) (i 1)) grn1
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                              (i 2))
+                           (exp (pi1 (ggen (N 0))) (m (f mphi0)) (r (N 1)))
+                           (if_then_else_M
+                              (if_then_else_B
+                                 (EQ_M
+                                    (to
+                                       (f
+                                          [G (N 0); 
+                                          g (N 0);
+                                          if_then_else_M
+                                           (Bvar 0) O
+                                            (if_then_else_M
+                                               (Bvar 1) O
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 1)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 1)) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                                    (i 1))
+                                 (EQ_M
+                                    (act
+                                       (f
+                                          [G (N 0); 
+                                          g (N 0);
+                                          if_then_else_M
+                                           (Bvar 0) O
+                                            (if_then_else_M
+                                               (Bvar 1) O
+                                               (if_then_else_M
+                                                  (EQ_M (to x1) (i 1)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 1)) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) &
+                                                  (EQ_M (act x1) new) grn1
+                                                  (if_then_else_M
+                                                  (EQ_M (to x1) (i 2)) grn1 O)))))]))
+                                    new) FAlse)
+                              (exp (pi1 (ggen (N 0))) 
+                                 (pi2 (ggen (N 0))) 
+                                 (r (N 2))) O)))) O))).
+simpl in H0.
+
+ repeat (try rewrite IFTRUE_M in H0; try rewrite IFFALSE_M in H0; try rewrite IFSAME_M in H0;try rewrite IFTRUE_B in H0; try rewrite IFFALSE_B in H0; try rewrite IFSAME_B in H0).
+unfold  mphi1. simpl. unfold qa0000.
+
+(**************************************)
+
+
+
+rewrite H.
+clear H.
+reflexivity.
+Qed.
+
+
+
+Theorem RRS3 : phi3 ~ phi33.
+
+Proof.
+  
+repeat unfold phi3, phi33, phi2, phi1, phi31, phi32, phi0. repeat unfold t10, t11, t12, t13,t14. simpl.
+unfold qa0000.
+
+pose proof(mor_eval_andB 1  grn1   (if_then_else_M (Bvar 1) grn1
+                  (if_then_else_M (EQ_M (to x1) (i 2)) & (Bvar 2)
+                     grn1 (if_then_else_M (EQ_M (to x1) (i 2)) grn1 O)))).
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 1))) in H.
+ simpl in H.
+
+rewrite IFTRUE_M in H.
+rewrite IFFALSE_M in H.
+apply Forall_ELM_EVAL_M with (n:=2) (x:=  (EQ_M (act x1) new)) in H.
+ simpl in H.
+rewrite (IFSAME_M _ (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))) in H.
+rewrite H .
+
+pose proof(mor_eval_andB 1    (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))  (if_then_else_M (Bvar 1)
+                     (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1))) O)).
+simpl in H0.
+
+rewrite IFTRUE_M in H0.
+
+rewrite IFFALSE_M in H0.
+
+rewrite IFSAME_M with (x:= (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0))) (r (N 1)))) in H0.
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 2))) in H0.
+ simpl in H0.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x1) new)) in H0.
+ simpl in H0.
+
+rewrite H0 .
+clear H. clear H0.
+
+unfold qa1000, qa0010, qa0100, qa0001.
+(**********(EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)**********)
+pose proof (mor_eval_andB 1  (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                 (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                    (if_then_else_M (EQ_M (to x2) (i 1)) acc
+                       (if_then_else_M (EQ_M (to x2) (i 2)) grn2 O)))) 
+(if_then_else_M (Bvar 1)
+                  (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                     (if_then_else_M
+                        (EQ_M (reveal x2) (i 1)) & (Bvar 1)
+                        mx1rn1
+                        (if_then_else_M
+                           (EQ_M (to x2) (i 2)) & (EQ_M (act x2) new) grn2 O)))
+                  (if_then_else_M (EQ_M (to x1) (i 2)) & (Bvar 2)
+                     (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                        (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                           (if_then_else_M (EQ_M (to x2) (i 2)) acc
+                              (if_then_else_M (EQ_M (to x2) (i 1)) grn2 O))))
+                     (if_then_else_M (EQ_M (to x1) (i 2))
+                        (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                           (if_then_else_M
+                              (EQ_M (reveal x2) (i 2)) & (EQ_M (to x1) (i 2))
+                              mx1rn1
+                              (if_then_else_M
+                                 (EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)
+                                 grn2 O))) O)))).
+
+simpl in H. rewrite IFTRUE_M in H. rewrite IFFALSE_M in H. 
+pose proof(IFTF 3).
+
+apply Forall_ELM_EVAL_B with (n:=3) (b:= (EQ_M (reveal (f mphi1)) (i 1)) ) in H0. simpl in H0.
+rewrite H0 in H.
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 1))) in H.
+ simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x1) new)) in H.
+ simpl in H.
+
+rewrite H.
+
+(**********(EQ_M (to x1) (i 2)) & (EQ_M (act x1) new)**********)
+pose proof (mor_eval_andB 1  (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                        (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                           (if_then_else_M (EQ_M (to x2) (i 2)) acc
+                              (if_then_else_M (EQ_M (to x2) (i 1)) grn2 O))))
+(if_then_else_M (Bvar 1)
+                        (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                           (if_then_else_M
+                              (EQ_M (reveal x2) (i 2)) & (Bvar 1)
+                              mx1rn1
+                              (if_then_else_M
+                                 (EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)
+                                 grn2 O))) O)).
+
+simpl in H1. rewrite IFTRUE_M in H1.
+ rewrite IFFALSE_M in H1.  
+pose proof(IFTF 3).
+
+apply Forall_ELM_EVAL_B with (n:=3) (b:= (EQ_M (reveal (f mphi1)) (i 2)) ) in H2. simpl in H2.
+rewrite H2 in H1.
+clear H2.
+clear H0.
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 2))) in H1.
+ simpl in H1.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x1) new)) in H1.
+ simpl in H1.
+
+
+
+
+rewrite H1.
+clear H. clear H1.
+(**************************************)
+(*********** (EQ_M (to (f mphi1)) (i 2)) &   (EQ_M (act (f mphi1)) new)*****)
+
+pose proof (mor_eval_andB 1  (exp (pi1 (ggen (N 0))) (pi2 (ggen (N 0)))
+                             (r (N 2))) O).
+
+simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x2) (i 2))) in H.
+ simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x2) new)) in H.
+ simpl in H.
+rewrite H.
+clear H.
+
+(***********************(EQ_M (to (f mphi1)) (i 1))
+                                (EQ_M (act (f mphi1)) new) ***************)
+
+pose proof (mor_eval_andB 1  (exp (pi1 (ggen (N 0))) 
+                                (pi2 (ggen (N 0))) 
+                                (r (N 2))) O).
+
+simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x2) (i 1))) in H.
+ simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x2) new)) in H.
+ simpl in H.
+rewrite H.
+clear H.
+(***********************************************************************)
+(***********************************************************************)
+
+unfold qa1000_s, qa0010_s, qa0100_s, qa0001_s.
+
+unfold qa2000, qa1001, qa0020, qa0110, qa0200, qa0002.
+
+
+(********************(EQ_M (to x1) (i 1)) & (EQ_M (act x1) new)************)
+(**************************************************************************)
+pose proof (mor_eval_andB 1  (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                 (if_then_else_M (EQ_M (reveal x2) (i 2)) O
+                    (if_then_else_M (EQ_M (to x2) (i 1))
+                       (if_then_else_M (EQ_M (reveal x3) (i 2)) O
+                          (if_then_else_M
+                             ((((EQ_M (reveal x3) (i 1)) &
+                                (EQ_M (to x2) (i 1))) & 
+                               (Bvar 1)) &
+                              (notb (EQ_M (act x2) new))) &
+                             (Bvar 2) mx2rn1
+                             (if_then_else_M
+                                (EQ_M (to x3) (i 2)) & (EQ_M (act x3) new)
+                                grn3
+                                (if_then_else_M (EQ_M (to x3) (i 2)) grn3 O))))
+                       (if_then_else_M (EQ_M (to x2) (i 2))
+                          (if_then_else_M (EQ_M (reveal x3) (i 1)) O
+                             (if_then_else_M
+                                (EQ_M (reveal x3) (i 2)) &
+                                (EQ_M (to x1) (i 2)) mx1rn1
+                                (if_then_else_M
+                                   (EQ_M (reveal x3) (i 2)) &
+                                   (EQ_M (to x2) (i 2)) mx2rn2
+                                   (if_then_else_M (EQ_M (to x3) (i 1)) acc O))))
+                          O)))) 
+
+
+ (if_then_else_M (Bvar 1)  (if_then_else_M (EQ_M (reveal x2) (i 2)) O  (if_then_else_M  (EQ_M (reveal x2) (i 1)) & (Bvar 1)  (if_then_else_M (EQ_M (reveal x3) (i 2)) O
+                          (if_then_else_M (EQ_M (to x3) (i 2)) & (EQ_M (act x3) new) grn3 (if_then_else_M (EQ_M (to x3) (i 2)) grn3 O))) (if_then_else_M (EQ_M (to x2) (i 2)) & (EQ_M (act x2) new) (if_then_else_M (EQ_M (reveal x3) (i 2)) O (if_then_else_M (EQ_M (reveal x3) (i 1)) & (Bvar 1) mx1rn1 (if_then_else_M (EQ_M (reveal x3) (i 1)) & (EQ_M (to x2) (i 1)) mx2rn2
+                                   (if_then_else_M (EQ_M (to x3) (i 2)) acc O))))   O)))    (if_then_else_M (EQ_M (to x1) (i 2)) & (Bvar 2)  (if_then_else_M (EQ_M (reveal x2) (i 1)) O     (if_then_else_M (EQ_M (reveal x2) (i 2)) O   (if_then_else_M (EQ_M (to x2) (i 2)) (if_then_else_M (EQ_M (reveal x3) (i 1)) O (if_then_else_M ((((EQ_M (reveal x3) (i 2)) &
+                                      (EQ_M (to x2) (i 2))) & (EQ_M (to x1) (i 2))) &     (notb (EQ_M (act x2) new))) &
+                                   (Bvar 2) mx2rn1
+                                   (if_then_else_M
+                                      (EQ_M (to x3) (i 1)) &
+                                      (EQ_M (act x3) new) grn3
+                                      (if_then_else_M 
+                                         (EQ_M (to x3) (i 1)) grn3 O))))
+                             (if_then_else_M (EQ_M (to x2) (i 1))
+                                (if_then_else_M (EQ_M (reveal x3) (i 2)) O
+                                   (if_then_else_M
+                                      (EQ_M (reveal x3) (i 1)) &
+                                      (Bvar 1) mx1rn1
+                                      (if_then_else_M
+                                         (EQ_M (reveal x3) (i 1)) &
+                                         (EQ_M (to x2) (i 1)) mx2rn2
+                                         (if_then_else_M 
+                                            (EQ_M (to x3) (i 2)) acc O)))) O))))
+                    (if_then_else_M (EQ_M (to x1) (i 2))
+                       (if_then_else_M (EQ_M (reveal x2) (i 1)) O
+                          (if_then_else_M
+                             (EQ_M (reveal x2) (i 2)) & (EQ_M (to x1) (i 2))
+                             (if_then_else_M (EQ_M (reveal x3) (i 1)) O
+                                (if_then_else_M
+                                   (EQ_M (to x3) (i 1)) & (EQ_M (act x3) new)
+                                   grn3
+                                   (if_then_else_M 
+                                      (EQ_M (to x3) (i 1)) grn3 O)))
+                             (if_then_else_M
+                                (EQ_M (to x2) (i 1)) & (EQ_M (act x2) new)
+                                (if_then_else_M (EQ_M (reveal x3) (i 1)) O
+                                   (if_then_else_M
+                                      (EQ_M (reveal x3) (i 2)) &
+                                      (EQ_M (to x1) (i 2)) mx1rn1
+                                      (if_then_else_M
+                                         (EQ_M (reveal x3) (i 2)) &
+                                         (EQ_M (to x2) (i 2)) mx2rn2
+                                         (if_then_else_M 
+                                            (EQ_M (to x3) (i 1)) acc O)))) O)))
+                       O)))).
+simpl in H.
+
+rewrite IFTRUE_M in H.
+rewrite IFFALSE_M in H.
+pose proof(IFTF 3).
+
+apply Forall_ELM_EVAL_B with (n:=3) (b:=  (if_then_else_B
+                                         (EQ_M (reveal (f mphi2)) (i 1))
+                                         (EQ_M (to (f mphi1)) (i 1)) FAlse)) in H0. simpl in H0. 
+rewrite H0 in H. clear H0.
+pose proof(IFTF 3).
+
+apply Forall_ELM_EVAL_B with (n:=3) (b:=   (if_then_else_B
+                                   (if_then_else_B
+                                      (EQ_M (reveal (f mphi2)) (i 1))
+                                      (EQ_M (to (f mphi1)) (i 1)) FAlse)
+                                   (if_then_else_B 
+                                      (EQ_M (act (f mphi1)) new) FAlse TRue)
+                                   FAlse)) in H0. simpl in H0. 
+rewrite H0 in H.
+
+clear H0. 
+pose proof(IFTF 3).
+apply Forall_ELM_EVAL_B with (n:=3) (b:=  (EQ_M (reveal (f mphi1)) (i 1))) in H0. simpl in H0. 
+rewrite H0 in H. clear H0.
+
+pose proof(IFTF 3).
+apply Forall_ELM_EVAL_B with (n:=3) (b:=  (EQ_M (reveal (f mphi2)) (i 1))) in H0. simpl in H0. 
+rewrite H0 in H. clear H0.
+
+(*pose proof(Example16_B 3 TRue FAlse).
+
+apply Forall_ELM_EVAL_B with (n:=3) (b:= (EQ_M (act (f mphi1)) new) ) in H0. simpl in H0. 
+rewrite <- H0 in H. clear H0.*)
+
+rewrite IFSAME_B in H.
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to x1) (i 1))) in H.
+ simpl in H.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=   (EQ_M (act x1) new)) in H.
+simpl in H.
+
+(*****************************  (EQ_M (to (f mphi2)) (i 2))
+                                  (EQ_M (act (f mphi2)) new) **************)
+
+pose proof (mor_eval_andB 1   (exp (pi1 (ggen (N 0))) 
+                                   (pi2 (ggen (N 0))) 
+                                   (r (N 3))) (if_then_else_M (Bvar 1)
+                                   (exp (pi1 (ggen (N 0))) 
+                                      (pi2 (ggen (N 0))) 
+                                      (r (N 3))) O)).
+
+simpl in H0. rewrite IFTRUE_M in H0. rewrite IFFALSE_M in H0. rewrite IFSAME_M in H0. 
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=   (EQ_M (to (f mphi2)) (i 2))) in H0.
+ simpl in H0.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=    (EQ_M (act (f mphi2)) new)) in H0.
+ simpl in H0.
+rewrite H0 in H.
+clear H0.
+simpl in H.
+
+(******************************** (EQ_M (reveal (f mphi2)) (i 2))
+                                   (EQ_M (to (f mphi0)) (i 2)))******************
+
+pose proof (mor_eval_andB 1    (exp (pi1 (ggen (N 0))) 
+                                   (m (f mphi0)) (r (N 1)))
+                                  (if_then_else_M
+                                   (if_then_else_B
+                                      (Bvar 1)
+                                      (EQ_M (to (f mphi1)) (i 2)) FAlse)
+                                   (exp (pi1 (ggen (N 0))) 
+                                      (m (f mphi1)) 
+                                      (r (N 2)))  (if_then_else_M
+                                      (EQ_M (to (f mphi2)) (i 1)) acc O))).
+
+simpl in H0. rewrite IFTRUE_B in H0. rewrite IFFALSE_B in H0. rewrite IFFALSE_M in H0. 
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=   (EQ_M (to (f mphi2)) (i 2))) in H0.
+ simpl in H0.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=    (EQ_M (to (f mphi0)) (i 2))) in H0.
+ simpl in H0.
+***)
+
+
+(***************(EQ_M (to (f mphi0)) (i 2)) 
+                 (EQ_M (act x1) new)************************)
+
+
+
+pose proof (mor_eval_andB 1  (if_then_else_M (EQ_M (reveal (f mphi1)) (i 1)) O
+                 (if_then_else_M (EQ_M (reveal (f mphi1)) (i 2)) O
+                    (if_then_else_M (EQ_M (to (f mphi1)) (i 2))
+                       (if_then_else_M (EQ_M (reveal (f mphi2)) (i 1)) O
+                          (if_then_else_M
+                             (if_then_else_B
+                                (if_then_else_B
+                                   (if_then_else_B
+                                      (if_then_else_B
+                                         (EQ_M (reveal (f mphi2)) (i 2))
+                                         (EQ_M (to (f mphi1)) (i 2)) FAlse)
+                                      (Bvar 1) FAlse)
+                                   (if_then_else_B 
+                                      (EQ_M (act (f mphi1)) new) FAlse TRue)
+                                   FAlse) (Bvar 2) FAlse)
+                             (exp (pi1 (ggen (N 0))) (m (f mphi1)) (r (N 1)))
+                             (if_then_else_M
+                                (if_then_else_B (EQ_M (to (f mphi2)) (i 1))
+                                   (EQ_M (act (f mphi2)) new) FAlse)
+                                (exp (pi1 (ggen (N 0))) 
+                                   (pi2 (ggen (N 0))) 
+                                   (r (N 3)))
+                                (if_then_else_M (EQ_M (to (f mphi2)) (i 1))
+                                   (exp (pi1 (ggen (N 0))) 
+                                      (pi2 (ggen (N 0))) 
+                                      (r (N 3))) O))))
+                       (if_then_else_M (EQ_M (to (f mphi1)) (i 1))
+                          (if_then_else_M (EQ_M (reveal (f mphi2)) (i 2)) O
+                             (if_then_else_M FAlse
+                                (exp (pi1 (ggen (N 0))) 
+                                   (m (f mphi0)) (r (N 1)))
+                                (if_then_else_M
+                                   (if_then_else_B
+                                      (EQ_M (reveal (f mphi2)) (i 1))
+                                      (EQ_M (to (f mphi1)) (i 1)) FAlse)
+                                   (exp (pi1 (ggen (N 0))) 
+                                      (m (f mphi1)) 
+                                      (r (N 2)))
+                                   (if_then_else_M
+                                      (EQ_M (to (f mphi2)) (i 2)) acc O)))) O))))
+
+
+ (if_then_else_M (Bvar 1)
+                 (if_then_else_M (EQ_M (reveal (f mphi1)) (i 1)) O
+                    (if_then_else_M
+                       (if_then_else_B (EQ_M (reveal (f mphi1)) (i 2))
+                          (Bvar 1) FAlse)
+                       (if_then_else_M (EQ_M (reveal (f mphi2)) (i 1)) O
+                          (if_then_else_M
+                             (if_then_else_B (EQ_M (to (f mphi2)) (i 1))
+                                (EQ_M (act (f mphi2)) new) FAlse)
+                             (exp (pi1 (ggen (N 0))) 
+                                (pi2 (ggen (N 0))) 
+                                (r (N 3)))
+                             (if_then_else_M (EQ_M (to (f mphi2)) (i 1))
+                                (exp (pi1 (ggen (N 0))) 
+                                   (pi2 (ggen (N 0))) 
+                                   (r (N 3))) O)))
+                       (if_then_else_M
+                          (if_then_else_B (EQ_M (to (f mphi1)) (i 1))
+                             (EQ_M (act (f mphi1)) new) FAlse)
+                          (if_then_else_M (EQ_M (reveal (f mphi2)) (i 1)) O
+                             (if_then_else_M
+                                (if_then_else_B
+                                   (EQ_M (reveal (f mphi2)) (i 2))
+                                   (Bvar 1) FAlse)
+                                (exp (pi1 (ggen (N 0))) 
+                                   (m (f mphi0)) (r (N 1)))
+                                (if_then_else_M
+                                   (if_then_else_B
+                                      (EQ_M (reveal (f mphi2)) (i 2))
+                                      (EQ_M (to (f mphi1)) (i 2)) FAlse)
+                                   (exp (pi1 (ggen (N 0))) 
+                                      (m (f mphi1)) 
+                                      (r (N 2)))
+                                   (if_then_else_M
+                                      (EQ_M (to (f mphi2)) (i 1)) acc O)))) O)))
+                 O)).
+simpl in H0.
+
+
+repeat (try rewrite IFTRUE_M in H0; try rewrite IFFALSE_M in H0; try rewrite IFSAME_M in H0;try rewrite IFTRUE_B in H0; try rewrite IFFALSE_B in H0; try rewrite IFSAME_B in H0).
+
+apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to (f mphi0)) (i 2)) ) in H0.
+ simpl in H0.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=    (EQ_M (act x1) new)) in H0.
+ simpl in H0.
+
+pose proof(IFTF 3).
+apply Forall_ELM_EVAL_B with (n:=3) (b:=   (if_then_else_B
+                                          (EQ_M (reveal (f mphi2)) (i 2))
+                                          (EQ_M (to (f mphi1)) (i 2)) FAlse)) in H1. simpl in H1. 
+rewrite H1 in H0. clear H1.
+
+
+pose proof(IFTF 3).
+apply Forall_ELM_EVAL_B with (n:=3) (b:=    (if_then_else_B
+                                    (if_then_else_B
+                                       (EQ_M (reveal (f mphi2)) (i 2))
+                                       (EQ_M (to (f mphi1)) (i 2)) FAlse)
+                                    (if_then_else_B
+                                       (EQ_M (act (f mphi1)) new) FAlse TRue)
+                                    FAlse)) in H1. simpl in H1. 
+
+rewrite H1 in H0. clear H1.
+
+
+pose proof(IFTF 3).
+apply Forall_ELM_EVAL_B with (n:=3) (b:=    (EQ_M (reveal (f mphi1)) (i 2))) in H1. simpl in H1. 
+rewrite H1 in H0. clear H1.
+pose proof(IFTF 3).
+apply Forall_ELM_EVAL_B with (n:=3) (b:=    (EQ_M (reveal (f mphi2)) (i 2))) in H1. simpl in H1. 
+rewrite H1 in H0. clear H1.
+
+
+(********************(EQ_M (to (f mphi2)) (i 1))
+                              (EQ_M (act (f mphi2)) new)**************)
+
+
+pose proof (mor_eval_andB 1  (exp (pi1 (ggen (N 0))) 
+                              (pi2 (ggen (N 0))) (r (N 3))) (if_then_else_M  (Bvar 1)
+                              (exp (pi1 (ggen (N 0))) 
+                                 (pi2 (ggen (N 0))) 
+                                 (r (N 3))) O)).
+
+simpl in H1. 
+
+repeat (try rewrite IFTRUE_M in H1; try rewrite IFFALSE_M in H1; try rewrite IFSAME_M in H1;try rewrite IFTRUE_B in H1; try rewrite IFFALSE_B in H1; try rewrite IFSAME_B in H1).
+
+ apply Forall_ELM_EVAL_M with (n:=1) (x:=  (EQ_M (to (f mphi2)) (i 1)) ) in H1.
+ simpl in H1.
+
+apply Forall_ELM_EVAL_M with (n:=2) (x:=    (EQ_M (act (f mphi2)) new)) in H1.
+ simpl in H1.
+
+rewrite H1 in H0. clear H1.
+
+(*************************************(EQ_M (reveal (f mphi2)) (i 2))****************************************)
+
+
+pose proof(IFEVAL_M  (exp (pi1 (ggen (N 0))) (m (f mphi0)) (r (N 1)))
+                              (if_then_else_M
+                                 (if_then_else_B
+                                    (Bvar 0)
+                                    (EQ_M (to (f mphi1)) (i 2)) FAlse)
+                                 (exp (pi1 (ggen (N 0))) 
+                                    (m (f mphi1)) (r (N 2)))
+                                 (if_then_else_M (EQ_M (to (f mphi2)) (i 1))
+                                    acc O)) 0).
+
+apply Forall_ELM_EVAL_M with (n:=0) (x:= (EQ_M (reveal (f mphi2)) (i 2))   ) in H1. simpl in H1.
+repeat (try rewrite IFTRUE_M in H1; try rewrite IFFALSE_M in H1; try rewrite IFSAME_M in H1;try rewrite IFTRUE_B in H1; try rewrite IFFALSE_B in H1; try rewrite IFSAME_B in H1).
+rewrite H1 in H0. clear H1.
+
+
+(***************************(EQ_M (to (f mphi1)) (i 2))************)
+
+
+pose proof(IFEVAL_M      (if_then_else_M (EQ_M (reveal (f mphi2)) (i 1)) O
+                           (if_then_else_M
+                              (if_then_else_B
+                                 (if_then_else_B
+                                    (EQ_M (reveal (f mphi2)) (i 2))
+                                   (Bvar 0) FAlse)
+                                 (if_then_else_B (EQ_M (act (f mphi1)) new)
+                                    FAlse TRue) FAlse)
+                              (exp (pi1 (ggen (N 0))) (m (f mphi1)) (r (N 1)))
+                              (if_then_else_M (EQ_M (to (f mphi2)) (i 1))
+                                 (exp (pi1 (ggen (N 0))) 
+                                    (pi2 (ggen (N 0))) 
+                                    (r (N 3))) O)))
+                        (if_then_else_M (EQ_M (to (f mphi1)) (i 1))
+                           (if_then_else_M (EQ_M (reveal (f mphi2)) (i 2)) O
+                              (if_then_else_M
+                                 (if_then_else_B
+                                    (EQ_M (reveal (f mphi2)) (i 1))
+                                    (EQ_M (to (f mphi1)) (i 1)) FAlse)
+                                 (exp (pi1 (ggen (N 0))) 
+                                    (m (f mphi1)) (r (N 2)))
+                                 (if_then_else_M (EQ_M (to (f mphi2)) (i 2))
+                                    acc O))) O)  0).
+
+apply Forall_ELM_EVAL_M with (n:=0) (x:= (EQ_M (to (f mphi1)) (i 2)) ) in H1. simpl in H1.
+repeat (try rewrite IFTRUE_M in H1; try rewrite IFFALSE_M in H1; try rewrite IFSAME_M in H1;try rewrite IFTRUE_B in H1; try rewrite IFFALSE_B in H1; try rewrite IFSAME_B in H1).
+rewrite H1 in H0. clear H1.
+
+
+pose proof(IFTF 3).
+apply Forall_ELM_EVAL_B with (n:=3) (b:=   (EQ_M (reveal (f mphi2)) (i 2))) in H1. simpl in H1. 
+rewrite H1 in H0. clear H1.
+
+
+(***********************************************(EQ_M (to (f mphi1)) (i 1))******************************)
+pose proof( IFEVAL_M (if_then_else_M (EQ_M (reveal (f mphi2)) (i 2)) O
+                              (if_then_else_M
+                                 (if_then_else_B
+                                    (EQ_M (reveal (f mphi2)) (i 1))
+                                   (Bvar 0) FAlse)
+                                 (exp (pi1 (ggen (N 0))) 
+                                    (m (f mphi1)) (r (N 2)))
+                                 (if_then_else_M (EQ_M (to (f mphi2)) (i 2))
+                                    acc O))) O 0 ).
+
+apply Forall_ELM_EVAL_M with (n:=0) (x:= (EQ_M (to (f mphi1)) (i 1)) ) in H1. simpl in H1.
+repeat (try rewrite IFTRUE_M in H1; try rewrite IFFALSE_M in H1; try rewrite IFSAME_M in H1;try rewrite IFTRUE_B in H1; try rewrite IFFALSE_B in H1; try rewrite IFSAME_B in H1).
+rewrite H1 in H0. clear H1.
+pose proof(IFTF 3).
+apply Forall_ELM_EVAL_B with (n:=3) (b:=   (EQ_M (reveal (f mphi2)) (i 1))) in H1. simpl in H1. 
+rewrite H1 in H0. clear H1.
+
+reflexivity.
+Qed.
+
+Check notb.
+Print notb.
+
+SearchAbout notb.
+Theorem b1_notb2 : forall (n1 : nat) , (Bvar n1) &(notb (Bvar (n1+1))) ##
+(if_then_else_B (Bvar (n1+1)) FAlse (Bvar n1)) .
+
+Proof.
+ intros.
+
+unfold notb, andB.
+
+rewrite <- IFSAME_B with (b:= (Bvar (n1+1))) (b1:= (if_then_else_B (Bvar n1) (if_then_else_B (Bvar (n1 + 1)) FAlse TRue) FAlse)).
+
+rewrite IFEVAL_B with (n := (n1+1)).
+ simpl.
+rewrite <- beq_nat_refl.
+rewrite IFFALSE_B.
+rewrite IFTRUE_B.
+rewrite IFSAME_B.
+(*************)
+assert(H: beq_nat n1 (n1 + 1) = false).
+induction n1.
+reflexivity. 
+simpl.
+assumption.
+(************)
+rewrite H.
+rewrite IFTF.
+reflexivity.
+Qed.
+

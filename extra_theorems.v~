@@ -1,0 +1,63 @@
+Load "Example20".
+(*****************************************some theorems**********************************************************)
+(**************************************************************************************************)
+
+Theorem mor_eval_andB : forall (n1 : nat) (t1 t2:message), (if_then_else_M (Bvar n1)& (Bvar (n1+1)) t1 t2) #
+(if_then_else_M (Bvar n1) (if_then_else_M (Bvar (n1+1)) ((n1+1):=TRue)((n1:=TRue)t1) ((n1+1):=FAlse)((n1:=TRue)t2)) (((n1:=FAlse)t2))).
+
+Proof. intros.
+unfold andB.
+rewrite <- IFSAME_M with (b:= (Bvar n1)) (x:=  (if_then_else_M (if_then_else_B (Bvar n1) (Bvar (n1+1)) FAlse) t1 t2)) .
+rewrite IFEVAL_M .
+simpl.
+rewrite <- beq_nat_refl.
+rewrite IFTRUE_B.
+rewrite IFFALSE_B.
+rewrite IFFALSE_M.
+assert(H: (beq_nat (n1+1) n1 = false)).
+rewrite Nat.eqb_sym.
+induction n1.
+reflexivity.
+simpl. auto.
+rewrite H.
+rewrite IFEVAL_M with (n:= (n1+1)).
+reflexivity.
+Qed.
+
+(***************corollary*********************************************)
+Axiom mor_eval_andB' : forall (b1 b2 : Bool) (t1 t2 : message) , (if_then_else_M b1 & b2 t1 t2 ) # (if_then_else_M b1 (if_then_else_M b2 (subbol_msg' b2 TRue (subbol_msg' b1 TRue t1))  (subbol_msg' b2 FAlse (subbol_msg' b1 TRue t2))) (subbol_msg' b1 FAlse t2)).
+
+
+Theorem breq_msgeq: forall (n:nat) (m1 m2 m3 m4 :message) , ((n:= TRue)m1)# ((n:= TRue)m3) -> ((n:= FAlse)m2)# ((n:= FAlse)m4) -> (if_then_else_M (Bvar n) m1 m2) # (if_then_else_M (Bvar n) m3 m4).
+Proof. intros.
+rewrite IFEVAL_M. rewrite H. rewrite H0. rewrite IFEVAL_M with (t1:= m3) (t2:= m4).
+reflexivity. Qed.
+
+(*****************Corollary ***********************************************)
+Theorem breq_msgeq': forall (  b :Bool) (m1  m2 m3 m4 :message) ,  (subbol_msg' b TRue m1) # (subbol_msg' b TRue m2) -> (subbol_msg' b FAlse m3) # (subbol_msg' b FAlse m4) -> (if_then_else_M b m1 m3) # (if_then_else_M b m2 m4).
+
+Proof. intros.
+rewrite IFEVAL_M'.
+rewrite IFEVAL_M' with (t1:= m2).
+rewrite H, H0.
+
+reflexivity.
+Qed.
+(****************************** then branches are equal******************)
+Axiom breq_msgeq1: forall (n:nat) ( m2 m3 m4 :message) ,  ((n:= FAlse)m2)# ((n:= FAlse)m4) -> (if_then_else_M (Bvar 1) m3 m2) # (if_then_else_M (Bvar n) m3 m4).
+
+ Theorem breq_msgeq2: forall (  b :Bool) ( m2 m3 m4 :message) ,  (subbol_msg' b FAlse m2) # (subbol_msg' b FAlse m4) -> (if_then_else_M b m3 m2) # (if_then_else_M b m3 m4).
+
+
+
+
+
+Theorem  breq_msgeq_andB : forall (n1 n2:nat) (m1 m2 m1' m2' :message), ( (n1 := TRue) (n2 := TRue) m1) #  ((n1 := TRue) (n2 := TRue) m1') ->  ( (n1 := TRue) (n2 := FAlse) m2) #
+ ( (n1 := TRue) (n2 := FAlse) m2') -> ((n1 := FAlse) m2) #  ((n1 := FAlse) m2') -> (if_then_else_M (Bvar n1) (if_then_else_M (Bvar n2) m1 m2) m2) #  (if_then_else_M (Bvar n1) (if_then_else_M (Bvar n2) m1' m2') m2').
+ Proof. intros.  rewrite IFEVAL_M with (t1:= m1) (t2:= m2). rewrite IFEVAL_M with (t2:= m2).
+simpl. rewrite IFEVAL_M with (t1:= m1') (t2:= m2'). rewrite IFEVAL_M with (t2:= m2').
+simpl. rewrite H; rewrite H0 ; rewrite H1. reflexivity. Qed.
+
+
+
+

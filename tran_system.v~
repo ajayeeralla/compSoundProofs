@@ -1,0 +1,38 @@
+
+Require Import Coq.MSets.MSetList.
+Require Import Coq.Lists.ListSet.
+
+Require Export IND_AXIOMS.
+
+
+(************************Set of states************)
+Definition Qn  := forall n, n<>0 ->  (set (ilist nat n)).
+
+
+
+Check Qn.
+
+Definition var_list :nat -> Type := ilist message .
+(**********************Set of transitiion rules*****)
+Inductive LSTR (m :nat): Type :=
+| lstr : nat -> ( var_list m) -> LSTR (m).
+
+Inductive RSTR (m:nat) : Type :=
+|rstr :  nat -> message -> (var_list m) -> RSTR(m).
+
+(*********************************************)
+Definition Trans (b:bool) := b = true -> forall n, LSTR(n) -> RSTR(n+1).
+(**********************************************) 
+
+
+
+
+
+
+
+
+
+
+
+
+

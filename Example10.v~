@@ -1,0 +1,76 @@
+Load "Example9".
+
+(***************************************************************)
+
+Theorem Example10_M: forall (x  F z : message), [msg x] ~ [msg (const F z )] ->    x # (const F z) .
+ Proof. 
+intros.
+simpl in H.
+unfold const in H.
+unfold const.
+apply FUNCApp_const with (a := [msg F])(ml1 := ([msg x]))(ml2 := [msg F]) in H.
+
+unfold const in H.
+unfold app_mylist in H.
+
+apply FUNCApp_EQM with (p1 := 0) (p2:=1) in H.  
+simpl in H.
+ unfold EQM_at_pos in H.
+unfold chkmsg_os in H. unfold getelt_at_pos in H. 
+simpl in H. 
+unfold app_mylist in H.
+
+apply RESTR1 with (l1 := [])  (l2 := [ msg F; bol (EQ_M x F)])(l1':= []) (l2' := [ msg F; bol (EQ_M F F)]) in H.
+simpl in H.
+
+apply RESTR1 with (l1 := [])  (l2 := [ bol (EQ_M x F)])(l1':= []) (l2' := [ bol (EQ_M F F)]) in H.
+simpl in H.
+assert (J:[bol (EQ_M F F) ] ~[bol TRue]) .
+assert(K: (EQI_msg F F)).
+reflexivity.
+apply K.
+assert (K:[bol (EQ_M x F)] ~[bol TRue]) .
+apply EQI_trans with (ml2 := [bol (EQ_M F F)]).
+apply H.
+apply J.
+apply K.
+Qed.
+
+(*************x~f -> x=f******************************************************)
+
+Theorem Example10_B: forall (x  F z : Bool), [bol x] ~ [bol (const F z )] ->  x ## (const F  z) .
+ Proof.
+
+intros.
+simpl in H.
+unfold const in H.
+unfold const.
+apply FUNCApp_const with (a := [bol F])(ml1 := ([bol x]))(ml2 := [bol F]) in H.
+unfold const in H.
+simpl in H.
+pose proof (FUNCApp_EQB).
+apply FUNCApp_EQB with ( p1:=0)(p2:=1) in H.
+
+unfold app_mylist in H.
+unfold EQB_at_pos in H.
+simpl in H.
+apply RESTR1 with (l1 := []) (l2 := [ bol F ; bol (EQ_B x F)])(l1':= []) (l2' := [ bol F ; bol (EQ_B F F)]) in H.
+simpl in H.
+apply RESTR1 with (l1 := [])  (l2 := [ bol (EQ_B x F)])(l1':= []) (l2' := [ bol (EQ_B F F)]) in H.
+simpl in H.
+
+(**
+apply RESTR with (n:=3)(m:=1)(ml1:= [bol x; bol F; bol (EQ_B x F)]) (ml2:=[bol F; bol F; bol (EQ_B F F)]) (P:= (project (bol FAlse) 3 )) in H.
+
+simpl in H.
+**)
+assert (J:[bol (EQ_B F F) ] ~[bol TRue]) .
+assert(K: (EQI_bol F F)).
+reflexivity.
+apply K.
+assert (K:[bol (EQ_B x F)] ~[bol TRue]) .
+apply EQI_trans with (ml2 := [bol (EQ_B F F)]).
+apply H.
+apply J.
+apply K.
+Qed.

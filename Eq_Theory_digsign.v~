@@ -1,0 +1,16 @@
+Load "EQ_THEORY".
+(******signatue scheme satisfy the following axioms****)
+
+Axiom correctness :  forall (x t :message), (ver (pk x)  t (sign (sk x) t)) ## TRue.
+
+
+(************Existential unforgeability under adaptively chosen message attacks (UF-CMA secure)******)
+Print getelt_ml.
+
+Fixpoint b  (j:nat) (k:nat) {n:nat}(ml: ilist message n) (t u :message) : Bool :=
+ match j with
+   | 0 => FAlse
+   | S n' => (if_then_else_B (EQ_M t (getelt_ml O n' ml)) (ver (pk (N k)) (getelt_ml O n' ml) u) (b (pred n') k ml t u))
+             end.
+
+Axiom UFCMA : forall (n l :nat)(ml: ilist message l) (t u: message), (ver (pk (N n)) t u) ## (b l n ml t u).

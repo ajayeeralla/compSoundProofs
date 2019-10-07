@@ -1,0 +1,1 @@
+Definition b (n:nat) (t u :message) := if_then_else_B (EQ_M t (t n)) (ver (pk n) t u) (b (n-1) t u).

@@ -1,0 +1,118 @@
+Load "EQ_THEORY".
+(**
+Ltac dropone_in H := apply RESTR_Drop in H ; unfold dropone in H ;  simpl in H.
+Ltac rev_dropone_in H := apply RESTR_rev in H; apply RESTR_Drop in H ; unfold dropone in H ; apply RESTR_rev in H;  simpl in H.*)
+Ltac restr_proj p1  := apply RESTR_proj with (p:= p1) ; unfold proj_at_pos  ;  simpl.
+Ltac restr_proj_in p1 H  := apply RESTR_proj with (p:= p1) in H ; unfold proj_at_pos in H ;  simpl in H.
+
+
+Ltac funapp_ses_in n1 n2 H := apply FUNCApp_session with (n:= n1)  (m:= n2) in H; simpl in H.
+Ltac funapp_to_in  p1 H := apply FUNCApp_to with  (p:= p1) in H ; unfold to_at_pos in H; simpl in H.
+Ltac funapp_EQM_in p3 p4 H := apply FUNCApp_EQM with  (p1:= p3 ) (p2:=p4) in H; unfold EQM_at_pos in H; simpl in H.
+(*
+Ltac funapp_EQM1_in p5 p3 p4 H1 H2  := apply FUNCApp_EQM1 with  (p:=p5) (p1:= p3 ) (p2:=p4) in H1; unfold EQM_at_pos in H1; simpl in H1; unfold insert_at_pos in H1; simpl in H1;apply FUNCApp_EQM1 with  (p:=p5) (p1:= p3 ) (p2:=p4) in H2; unfold EQM_at_pos in H2; simpl in H2; unfold insert_at_pos in H2; simpl in H2.*)
+Ltac funapp_O_in  H := apply FUNCApp_O  in H; simpl in H.
+
+Ltac funapp_act_in p1 H:= apply FUNCApp_act with (p:=p1) in H; unfold act_at_pos in H; simpl in H.
+Ltac funapp_new_in H:= apply FUNCApp_new in H; simpl in H.
+Ltac funapp_andB_in p3 p4 H := apply FUNCApp_andB with (p1:= p3) (p2:=p4) in H; unfold andB_at_pos in H; simpl in H.
+(*
+Ltac funapp_andB1_in p5 p3 p4 H1 H2 := apply FUNCApp_andB1 with (p:=p5) (p1:= p3) (p2:=p4) in H1; unfold andB_at_pos in H1;  simpl in H1; unfold insert_at_pos in H1; simpl in H1;apply FUNCApp_andB1 with (p:=p5) (p1:= p3) (p2:=p4) in H2; unfold andB_at_pos in H2;  simpl in H2; unfold insert_at_pos in H2; simpl in H2.
+Ltac funapp_andB1_in_1 p5 p3 p4 H1 := apply FUNCApp_andB1 with (p:=p5) (p1:= p3) (p2:=p4) in H1; unfold andB_at_pos in H1;  simpl in H1; unfold insert_at_pos in H1; simpl in H1.
+
+Ltac funapp_mexp_in p4 p5 p6 H := apply FUNCApp_m with (p:= p4) in H; unfold m_at_pos in H; simpl in H; apply FUNCApp_expatpos with (p1:= p5) (p2:=0) (p3:=p6) in H; unfold exp_at_pos in H; simpl in H.
+
+Ltac funapp_mexp1_in p7 p4 p5 p6 H := apply FUNCApp_m with (p:= p4) in H; unfold m_at_pos in H; simpl in H; apply FUNCApp_expatpos1 with (p:= p7) (p1:= p5) (p2:=0) (p3:=p6) in H; unfold exp_at_pos in H; simpl in H; unfold insert_at_pos in H; simpl in H.
+
+Ltac funapp_exp1_in p7 p4 p5 p6 H := apply FUNCApp_expatpos1 with (p:= p7) (p1:= p4) (p2:=p5) (p3:=p6) in H; unfold exp_at_pos in H; simpl in H; unfold insert_at_pos in H; simpl in H.
+Ltac funapp_reveal_in p1 H := apply FUNCApp_reveal with (p:= p1) in H ; unfold reveal_at_pos in H; simpl in H .
+Ltac funapp_EQM1_in_1 p5 p3 p4 H1  := apply FUNCApp_EQM1 with  (p:=p5) (p1:= p3 ) (p2:=p4) in H1; unfold EQM_at_pos in H1; simpl in H1. *)
+Ltac funapp_acc_in  H1  := apply FUNCApp_acc  in H1;  simpl in H1.
+
+Ltac funapp_elt_in n1 n2 :=
+ match goal with 
+| [H:  ?L1 ~ ?L2 |- _] => apply FUNCApp_elt with (p:=n1) (p1:= n2)  (ml1:= L1) (ml2:= L2) in H; unfold getelt_at_pos in H; simpl in H
+end . 
+Ltac funapp_exp_in  p4 p5 p6 H := apply FUNCApp_expatpos with  (p1:= p4) (p2:=p5) (p3:=p6) in H; unfold exp_at_pos in H; simpl in H .
+
+Ltac restr_swap p3 p4 L1 L2 := 
+   apply RESTR_swap with (p1:= p3) (p2 := p4) (ml1:= L1) (ml2:= L2) ; unfold swap_mylist ; simpl.
+
+Ltac restr_swap_in p3 p4 H := apply RESTR_swap with (p1:= p3) (p2 := p4) in H; unfold swap_mylist in H;  simpl in H.
+
+
+(****************apply tactic t n times****************)
+Ltac aply n tac :=
+match n with 
+| 0 =>  idtac
+| S ?n' => tac ; aply n' tac
+
+end.
+
+
+(*****************apply tactic t n times in Hypoothesis ***************)
+Ltac aply_in n tac H := 
+match n with
+| 0 =>  idtac
+| S ?n' => tac H; aply_in n' tac H
+end.
+ 
+
+(**
+Ltac funapp_exptrm p1 n2 n3 H := apply FUNCApp_exptrm with (p:= p1) (n:= n2) (n1:= n3) in H; unfold insert_at_pos in H; simpl in H.
+
+
+Ltac funapp_dropls  H := apply FUNCApp_dropls  in H; unfold droplastsec in H; unfold proj_two in H; simpl in H.
+Ltac funapp_droplt  H := apply FUNCApp_droplt  in H; unfold droplast3rd in H; unfold proj_three in H; simpl in H.
+**)
+
+(******reverse append******************************************
+Ltac rev_app t H := apply RESTR_rev in H ; simpl in H; t H ; 
+apply RESTR_rev in H; simpl in H; repeat reflexivity.
+*)
+
+(**************************************************************)
+
+Ltac Fr_pf := 
+repeat match goal with 
+| [ |- beq_nat ?X ?Y = ?Z] => destruct (beq_nat X Y) ;  match goal with | [H1: context [ if beq_nat ?X' ?Y' then ?Z' else ?Z''] |- _ ] =>  simpl in H1; repeat rewrite <- beq_nat_refl in H1 ; simpl in H1;  symmetry  end end; try assumption ; try reflexivity;
+   repeat match goal with 
+| [ H : beq_nat ?X ?Y = _ |- _ ] =>  match goal with | [H1: context [ if beq_nat ?X ?Y then _ else _ ] |- _ ] =>  rewrite H in H1;  simpl in H1 end end; try assumption ; try reflexivity.
+Ltac rew_all_hyps := simpl ; 
+repeat match goal with 
+| [H: beq_nat ?X ?Y = ?Z |- _] =>  match goal with | [ |- context [ if beq_nat ?X ?Y then _ else _ ] ] =>  rewrite H end;  repeat rewrite <- beq_nat_refl;  simpl; try reflexivity end.
+
+
+Fixpoint beqnat  (n1:nat) (l: list nat) : list bool :=
+match l with
+| nil => nil
+| cons h tl  => cons (beq_nat h n1) (beqnat n1 tl)
+end.
+
+Fixpoint beqnat_assns (l:list nat) : list bool :=
+match l with
+| nil => nil
+| cons n1  tl => let x := (rev (removelast (rev l))) in
+
+                   (app (beqnat n1 x) ( beqnat_assns tl))
+end.
+
+Ltac  beqnat_assns1 l :=
+match l with
+| nil => assert (true = true)
+| cons ?h ?tl => assert h ; constr:tl
+end.
+
+Ltac length ls :=
+  match ls with
+    | [] => O
+    |  _ :: ?ls' =>
+      let ls'' := length ls' in
+        constr:(S ls'')
+  end.
+
+Goal False.
+  
+Ltac Fr_prf := match goal with
+                 |[|- Fresh ?X  ?Y = ?Z ] => length X
+end.

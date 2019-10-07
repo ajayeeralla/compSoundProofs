@@ -1,0 +1,805 @@
+Load "extra_theorems".
+ 
+(***********i1, i2, r3, r4****************************************************)
+(*****************Real or random Secrecy*****************************************)
+(********************************************************************************)
+(******protocol Pi1 :The oracle reveals the actual nonce *************)
+
+(********************************************************************************)
+
+
+Definition phi0  := [ msg (pk (N 1)) ; msg (pk (N 2)); msg (N 1); msg (N 2)].
+Definition mphi0 := (conv_mylist_listm phi0).
+
+
+Definition x1 := (f mphi0).
+(******start state****************)
+Definition sr (n:nat) := (rs (N 1)).
+
+ Notation "( x , y )" := (pair x y) (at level 0).
+  
+ 
+Notation "( x , y , .. , z )" := (pair .. (pair x y) .. z) (at level 0).
+
+Check pk.
+SearchAbout pk.
+Definition qa00 := 
+ (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O
+ (if_then_elsem_ ((EQM (to x1) (i 1)) & (EQM (act x1) new)) (enc  ((N 1) , (nonce (N 1)))  (pk (N 2)) (sr 1)) 
+(if_then_elsem_ (EQM (to x1) (i 2))  (enc   (( pi2(dec x1 (sk (N 1)) ) , (nonce (N 1))) , (N 1))   (pk (pi1  (dec x1 (sk (N 1)) ))) (sr 2))   O)))).
+
+
+
+(************************)
+Definition t12:= msg qa00.
+Definition phi1 := phi0 ++ [ t12 ].
+
+
+(***********************************************************)
+
+Definition mphi1 := (conv_mylist_listm phi1).
+
+
+
+Definition x2 := (f mphi1).
+
+Definition tta1 ( x2 x1 :message) (j :nat) := (EQM (reveal x2) (i j)) & (EQM (to x1) (i j)).
+Definition tta2 (x3 x2 x1 :message) (j:nat) := (EQM (reveal x3) (i j)) & (EQM (to x2) (i j)) & (EQM (to x1) (i j))& (notb (EQM (act x2) new)) & (EQM (act x1) new).
+
+(**********qa00 -> qa10, qa01*************************************************)
+Definition qa10 :=  (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (to x2) (i 1))  (enc (pi2 (pi1 x2)) (pk (pi2 x2)) (sr 3)) (if_then_elsem_ (EQM (to x2) (i 2)) (enc   (( pi2(x2) , (nonce (N 2))) , (N 2))   (pk (pi1 x2)) (sr 4)) O)))).
+Definition qa01 := (if_then_elsem_ ((EQM (reveal x2) (i 2) ) & (EQM (to x1) (i 2))) (pi2 (pi1 (dec x1 (sk (N 1))) )) (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ ((EQM (to x2) (i 1)) & (EQM (act x2) new)) (enc  ((N 1) , (nonce (N 1)))  (pk (N 2)) (sr 5)) O))).
+
+
+
+Definition t13 :=  msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O
+ (if_then_elsem_ ((EQM (to x1) (i 1)) & (EQM (act x1) new)) qa10
+(if_then_elsem_ (EQM (to x1) (i 2)) qa01   O)))).
+Definition phi2:= phi1 ++ [t13].
+
+
+
+(***************************************************************************)
+
+Definition mphi2 := (conv_mylist_listm phi2).
+
+Definition x3 := (f mphi2).
+
+
+Definition qa20 :=  (if_then_elsem_ ((EQM (reveal  x3) (i 1) ) & (EQM (to x2) (i 1)) &(EQM (to x1) (i 1)) & (notb (EQM ( act x2) new)) &(EQM (act x1) new)) (dec x2 (sk (N 1)))  (  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O  (if_then_elsem_ (EQM (to  x3) (i 2))  (enc   (( pi2(dec x3 (sk (N 1)) ) , (nonce (N 1))) , (N 1))   (pk (pi1  (dec x3 (sk (N 1)) ))) (sr 6))   O)))).
+
+
+Definition qa11 :=  (if_then_elsem_ ((EQM (reveal  x3) (i 2) ) & (EQM (to x1) (i 2))) (pi2 (pi1 (dec x1 (sk (N 1))) ))  (if_then_elsem_ ((EQM (reveal  x3) (i 2) ) & (EQM (to x2) (i 2))) (pi2 (pi1 (dec x2 (sk (N 1))) ))  (if_then_elsem_ (EQM (to  x3) (i 1)) (enc (pi2 (pi1 x2)) (pk (pi2 x3)) (sr 7))  O))).
+
+Definition qa02 := (if_then_elsem_ (EQM (reveal x3) (i 1) ) O  (if_then_elsem_ (EQM (to x3 ) (i 1)) & (EQM (act x3) new) (enc  ((N 1) , (nonce (N 1)))  (pk (N 2)) (sr 8))   O)).
+
+Definition qa10_s :=  (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (to x2) (i 1))  qa20 (if_then_elsem_ (EQM (to x2) (i 2)) qa11 O)))).
+Definition qa01_s := (if_then_elsem_ ((EQM (reveal x2) (i 2) ) & (EQM (to x1) (i 2))) qa02 (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ ((EQM (to x2) (i 1)) & (EQM (act x2) new)) qa11 O))).
+
+
+Definition t14 :=  msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O
+ (if_then_elsem_ ((EQM (to x1) (i 1)) & (EQM (act x1) new)) qa10_s
+(if_then_elsem_ (EQM (to x1) (i 2)) qa01_s   O)))).
+
+Definition phi3:= phi2 ++ [t14]. 
+(***********************************************************************************************)
+
+Definition mphi3 := (conv_mylist_listm phi3).
+Definition x4 := (f mphi3).
+Definition mx3rn1 := (exp (G 0) (m x3) (r 1)).
+Definition mx3rn2 := (exp (G 0) (m x3) (r 2)).
+Definition mx3rn3 := (exp (G 0) (m x3) (r 3)).
+ 
+Definition mx1rn1 := (exp (G 0) (m x1) (r 1)).
+Definition mx1rn2 := (exp (G 0) (m x1) (r 2)).
+(********************qa2000 ->qbar, qa3000, qa2100, qa2001,qbar****************************************************)
+
+Definition qa30 := (if_then_elsem_ (EQM (reveal  x4) (i 2) ) O (if_then_elsem_ (EQM (to  x4) (i 2)) (enc   (( pi2(x2) , (nonce (N 2))) , (N 2))   (pk (pi1 x2)) (sr 9))  O )).
+  
+(****resume here***)
+Definition qa21 := (if_then_elsem_ ((EQM (reveal  x4) (i 2) ) & (EQM (to x1) (i 2))) mx1rn1    (if_then_elsem_ ((EQM (reveal  x4) (i 2) ) & (EQM (to x2) (i 2))) mx2rn2  (if_then_elsem_ ((EQM (reveal  x4) (i 2) ) & (EQM (to x3) (i 2))) mx3rn3
+                                                                                                                                                                               (if_then_elsem_ ((EQM (reveal  x4) (i 1) ) & (EQM (to x2) (i 1)) &(EQM (to x1) (i 1)) & (notb (EQM ( act x2) new)) &(EQM (act x1) new)) 
+                                                                                                                                                                                               (if_then_elsem_ ((EQM (reveal  x4) (i 1) ) & (EQM (to x3) (i 1)) &(EQM (to x1) (i 1)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new)) mx3rn1
+                                           (if_then_elsem_ ((EQM (reveal  x4) (i 1) ) & (EQM (to x3) (i 1)) &(EQM (to x2) (i 1)) & (notb (EQM ( act x3) new)) &(EQM (act x2) new)) mx3rn2 O)))))).
+
+
+ 
+
+Definition qa12 := (if_then_elsem_ (EQM (reveal  x4) (i 1) ) O ( if_then_elsem_ (EQM (to x4) (i 1)) acc O)).
+
+
+(*****************************qa1001 -> qa1002, qa2001***************************************************)
+Definition qa20_s :=  (if_then_elsem_ ((EQM (reveal  x3) (i 1) ) & (EQM (to x2) (i 1)) &(EQM (to x1) (i 1)) & (notb (EQM ( act x2) new)) &(EQM (act x1) new))  qa30  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (to  x3) (i 2)) qa21 O) ) ).
+
+
+Definition qa11_s := (if_then_elsem_ ((EQM (reveal  x3) (i 2) ) & (EQM (to x1) (i 2)))qa12 (if_then_elsem_ ((EQM (reveal  x3) (i 2) ) & (EQM (to x2) (i 2))) qa12   (if_then_elsem_ (EQM (reveal  x3) (i 1) ) O (if_then_elsem_ (EQM (to  x3) (i 1)) qa21 O)))).
+
+Definition qa02_s := (if_then_elsem_ (EQM (reveal x3) (i 1) ) O  (if_then_elsem_ (EQM (to x3 ) (i 1)) & (EQM (act x3) new) qa12 O)).
+Definition qa10_ss := (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (to x2) (i 1)) qa20_s (if_then_elsem_ (EQM (to x2) (i 2)) qa11_s O)))).
+
+Definition qa01_ss:=  (if_then_elsem_ ((EQM (reveal x2) (i 2) ) & (EQM (to x1) (i 2))) qa02_s (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (to x2 ) (i 1)) & (EQM (act x2) new) qa11_s O))).
+
+Definition t15 := msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ ((EQM (to x1) (i 1)) & (EQM (act x1) new)) qa10_ss (if_then_elsem_ (EQM (to x1) (i 2)) qa01_ss O) ) )).
+
+
+
+Definition phi4 :=  phi3 ++ [ t15 ]. 
+
+
+(*******************************************phi5****************************************************************)
+(***************************************************************************************************************)
+
+
+Definition mphi4 := (conv_mylist_listm phi4).
+Definition x5 := (f mphi4).
+Definition mx4rn4 := (exp (G 0) (m x4) (r 4)).
+Definition mx4rn3 := (exp (G 0) (m x4) (r 3)).
+Definition mx4rn2 := (exp (G 0) (m x4) (r 2)).
+Definition mx4rn1 := (exp (G 0) (m x4) (r 1)).
+Definition qa220:= (if_then_elsem_ (EQM (reveal x5) (i 3) ) O  (if_then_elsem_ ((EQM (to x5) (i 3)) & (EQM (act x5) new)) (grn 3) O) ).
+
+
+
+
+Definition qa211:= (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) mx1rn2   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) mx3rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) mx4rn2  (if_then_elsem_ (EQM (reveal x5) (i 3) ) O   (if_then_elsem_ (EQM (to x5) (i 3)) acc O)))))).
+
+
+Definition qa202 := (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn3   (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn3  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn3 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) mx4rn3 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) mx4rn3 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) mx4rn3   (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 2)) (grn 2) O) ))))))).
+
+Definition qa121 := (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) mx1rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) mx2rn3  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) mx3rn2     (if_then_elsem_ (EQM (reveal x5) (i 3) ) O  (if_then_elsem_ (EQM (to x5) (i 3)) acc O))))).
+
+Definition qa112:=    (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) mx2rn2 
+ (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) mx1rn1
+    (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) mx1rn1   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) mx3rn3     (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2  O))))))).
+
+Definition qa103 := (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) mx1rn1   (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) mx2rn1  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x3) (i 1)) mx3rn1  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x4) (i 1)) mx4rn1   (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 2)) (grn 2) O)))))).
+
+
+Definition qa022 :=  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) mx3rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) mx4rn2   (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn3   (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn3  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn3 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) mx4rn3 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) mx4rn3 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) mx4rn3 (if_then_elsem_ (EQM (reveal x5) (i 1) ) O (if_then_elsem_ (EQM (to x5) (i 1)) (grn 1) O) )))))))))).
+
+Definition qa013 :=  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) mx1rn2   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) mx3rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) mx4rn2    (if_then_elsem_ (EQM (reveal x5) (i 1) ) O  (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 1)) (grn 1) O))))))).
+(*************************************************************************************************)
+(*************************************************************************************************)
+
+Definition qa210_s :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa220  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa220 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa220 (if_then_elsem_ (EQM (reveal x4) (i 3) ) O  (if_then_elsem_ ((EQM (to x4) (i 3)) & (EQM (act x4) new)) qa211 O) )))).
+
+Definition qa201_s := (if_then_elsem_ (EQM (reveal x4) (i 2) ) O (if_then_elsem_ (EQM (reveal x4) (i 3) ) O   (if_then_elsem_ (EQM (to x4) (i 2)) qa211    (if_then_elsem_ (EQM (to x4) (i 3))  qa202 O)))).
+
+Definition qa120_s :=    (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa220 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa220    (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))   qa220 (if_then_elsem_ (EQM (reveal x4) (i 3) ) O  (if_then_elsem_ ((EQM (to x4) (i 3)) & (EQM (act x4) new))  qa121 O) )))).
+
+Definition qa111_s := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) qa211  (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) qa211 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1)) qa211   (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa211 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa121 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa121  (if_then_elsem_ (EQM (reveal x4) (i 3) ) O (if_then_elsem_ (EQM (to x4) (i 3)) qa112 O)))))))).
+
+
+Definition qa102_s := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa202 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa202 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))  qa202 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa103 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new)  qa103  (if_then_elsem_ (EQM (to x4) (i 2)) (grn 2) O) ))))).
+
+Definition qa021_s := (if_then_elsem_ (EQM (reveal x4) (i 1) ) O (if_then_elsem_ (EQM (reveal x4) (i 3) ) O   (if_then_elsem_ (EQM (to x4) (i 1)) qa121  (if_then_elsem_ (EQM (to x4) (i 3)) qa022 O )))).
+
+Definition qa012_s :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa022  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa022 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 2)) qa022  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa013 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa013   (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) qa112 O))))))).
+
+Definition qa003_s := (if_then_elsem_ (EQM (reveal x4) (i 1) ) O (if_then_elsem_ (EQM (reveal x4) (i 2) ) O (if_then_elsem_ (EQM (to x4) (i 1)) qa103 (if_then_elsem_ (EQM (to x4) (i 2)) qa013 O)))).
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qa200_ss := (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa210_s (if_then_elsem_ (EQM (to x3 ) (i 3)) & (EQM (act x3) new) qa201_s O)))).
+
+Definition qa110_ss := (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x1) (i 1))  qa210_s (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x2) (i 1))  qa210_s (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2))  qa120_s (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x3) (i 2))  qa120_s (if_then_elsem_ (EQM (reveal x3) (i 3) ) O
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qa111_s  O)))))).
+
+Definition qa101_ss :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_s (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_s  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa111_s
+ (if_then_elsem_ (EQM (to x3) (i 3))  qa102_s  O)))))).
+(*************qa010 -> qbar, qa020, qa110, qa011*****************************)
+
+Definition qa020_ss := (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1))  qa120_s
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qa021_s  O)))).
+
+Definition qa011_ss := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021_s  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021_s
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa111_s
+ (if_then_elsem_ (EQM (to x3) (i 3)) qa012_s  O)))))).
+(************qa001 -> qabar, qa101, qa011, qa002*****************************)
+
+Definition qa002_ss:= (if_then_elsem_  (EQM (reveal x3) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa003_s (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa102_s
+ (if_then_elsem_ (EQM (to x3) (i 2) ) qa012_s  O))))).
+
+
+(***********************************************************)
+ 
+Definition qa100_sss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_ss (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qa110_ss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qa101_ss  O))))).
+
+
+Definition qa010_sss := (if_then_elsem_ (EQM (reveal x2) (i 2)) & (EQM (to x1) (i 2)) qa020_ss (if_then_elsem_ (EQM (reveal x2) (i 1) ) O  (if_then_elsem_ (EQM (reveal x2) (i 3) ) O  (if_then_elsem_ (EQM (to x2) (i 1)) qa110_ss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qa011_ss O))))).
+
+Definition qa001_sss :=  (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 1)) qa101_ss (if_then_elsem_ (EQM (to x2) (i 2)) qa011_ss (if_then_elsem_ (EQM (to x2) (i 3)) qa002_ss  O) ) )))).
+
+
+Definition t16 :=  msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qa100_sss (if_then_elsem_ (EQM (to x1) (i 2)) qa010_sss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qa001_sss  O) ) )))).
+Definition phi5:= phi4 ++ [t16].
+
+(*******************************************phi6****************************************************************)
+(***************************************************************************************************************)
+
+
+Definition mphi5 := (conv_mylist_listm phi5).
+Definition x6 := (f mphi5).
+Definition mx5rn4 := (exp (G 0) (m x5) (r 4)).
+Definition mx5rn3 := (exp (G 0) (m x5) (r 3)).
+Definition mx5rn2 := (exp (G 0) (m x5) (r 2)).
+Definition mx5rn1 := (exp (G 0) (m x5) (r 1)).
+
+Definition qa221 :=  (if_then_elsem_ (EQM (reveal x6) (i 3) ) O  (if_then_elsem_ (EQM (to x6) (i 3)) acc O) ).
+
+Definition qa212 := (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x1) (i 2)) mx1rn2   (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x3) (i 2)) mx3rn2  (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x4) (i 2)) mx4rn2
+(if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x5) (i 2)) mx5rn2 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn3   (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn3  (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) mx4rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) mx4rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) mx4rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x1) new) mx5rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x2) new) mx5rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x3) new) mx5rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x4) new) mx5rn3   O))))))))))))))).
+
+Definition qa203:=  (if_then_elsem_ (EQM (reveal x6) (i 2) ) O  (if_then_elsem_ (EQM (to x6) (i 2)) (grn 2) O) ).
+
+Definition qa122 := (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x1) (i 1)) mx1rn1   (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x2) (i 1)) mx2rn1  (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x3) (i 1)) mx3rn1  (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x4) (i 1)) mx4rn1
+(if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x5) (i 1)) mx5rn1  (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn3   (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn3  (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) mx4rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) mx4rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) mx4rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x1) new) mx5rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x2) new) mx5rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x3) new) mx5rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x4) new) mx5rn3   O))))))))))))))).
+
+Definition qa113 := (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x1) (i 1)) mx1rn1   (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x2) (i 1)) mx2rn1  (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x3) (i 1)) mx3rn1  (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x4) (i 1)) mx4rn1
+(if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x5) (i 1)) mx5rn1 (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x1) (i 2)) mx1rn2   (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x3) (i 2)) mx3rn2  (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x4) (i 2)) mx4rn2
+(if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x5) (i 2)) mx5rn2   O)))))))))). 
+
+Definition qa023 :=  (if_then_elsem_ (EQM (reveal x6) (i 1) ) O  (if_then_elsem_ (EQM (to x6) (i 1)) (grn 1) O) ).
+(***********************************************************************************************)
+(***********************************************************************************************)
+Definition qa220_s:= (if_then_elsem_ (EQM (reveal x5) (i 3) ) O  (if_then_elsem_ ((EQM (to x5) (i 3)) & (EQM (act x5) new)) qa221 O) ).
+
+
+
+
+Definition qa211_s := (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) qa221  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa221  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa221  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) qa221  (if_then_elsem_ (EQM (reveal x5) (i 3) ) O   (if_then_elsem_ (EQM (to x5) (i 3)) qa212 O)))))).
+
+
+Definition qa202_s := (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa203  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa203  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) qa203 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) qa203 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) mx4rn3 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) qa203   (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 2)) qa212 O) ))))))).
+
+Definition qa121_s := (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) qa221  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa221  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa221    (if_then_elsem_ (EQM (reveal x5) (i 3) ) O  (if_then_elsem_ (EQM (to x5) (i 3)) qa122 O))))).
+
+Definition qa112_s:= (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) qa212  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) qa212  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x3) (i 1)) qa212  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x4) (i 1)) qa212 (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) qa122   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa122  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa122   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) qa122   (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa113    (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa113  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) qa113 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) qa113 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) qa113 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) qa113 O)))))))))))))).
+
+Definition qa103_s := (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) qa203  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) qa203  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x3) (i 1)) qa203  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x4) (i 1)) qa203  (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 2)) qa113 O)))))).
+
+
+Definition qa022_s :=  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa122  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa122  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) qa122  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa023   (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa023  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) qa023 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) qa023 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) qa023 (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) qa023 (if_then_elsem_ (EQM (reveal x5) (i 1) ) O (if_then_elsem_ (EQM (to x5) (i 1)) qa122 O) )))))))))).
+
+Definition qa013_s :=  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) qa023  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa023  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa023  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) qa023   (if_then_elsem_ (EQM (reveal x5) (i 1) ) O  (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 1)) qa113 O))))))).
+(*************************************************************************************************)
+(*************************************************************************************************)
+
+Definition qa210_ss :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa220_s  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa220_s (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa220_s (if_then_elsem_ (EQM (reveal x4) (i 3) ) O  (if_then_elsem_ ((EQM (to x4) (i 3)) & (EQM (act x4) new)) qa211_s O) )))).
+
+Definition qa201_ss := (if_then_elsem_ (EQM (reveal x4) (i 2) ) O (if_then_elsem_ (EQM (reveal x4) (i 3) ) O   (if_then_elsem_ (EQM (to x4) (i 2)) qa211_s    (if_then_elsem_ (EQM (to x4) (i 3))  qa202_s O)))).
+
+Definition qa120_ss :=    (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa220_s (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa220_s    (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))   qa220_s (if_then_elsem_ (EQM (reveal x4) (i 3) ) O  (if_then_elsem_ ((EQM (to x4) (i 3)) & (EQM (act x4) new))  qa121_s O) )))).
+
+Definition qa111_ss := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) qa211_s  (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) qa211_s (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1)) qa211_s   (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa211_s (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa121_s (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa121_s  (if_then_elsem_ (EQM (reveal x4) (i 3) ) O (if_then_elsem_ (EQM (to x4) (i 3)) qa112_s O)))))))).
+
+
+Definition qa102_ss := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa202_s (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa202_s (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))  qa202_s (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa103_s (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new)  qa103  (if_then_elsem_ (EQM (to x4) (i 2)) qa112_s O) ))))).
+
+Definition qa021_ss := (if_then_elsem_ (EQM (reveal x4) (i 1) ) O (if_then_elsem_ (EQM (reveal x4) (i 3) ) O   (if_then_elsem_ (EQM (to x4) (i 1)) qa121_s  (if_then_elsem_ (EQM (to x4) (i 3)) qa022_s O )))).
+
+Definition qa012_ss :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa022_s  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa022_s (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 2)) qa022_s  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa013_s (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa013_s   (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) qa112_s O))))))).
+
+Definition qa003_ss := (if_then_elsem_ (EQM (reveal x4) (i 1) ) O (if_then_elsem_ (EQM (reveal x4) (i 2) ) O (if_then_elsem_ (EQM (to x4) (i 1)) qa103_s (if_then_elsem_ (EQM (to x4) (i 2)) qa013_s O)))).
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qa200_sss := (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa210_ss (if_then_elsem_ (EQM (to x3 ) (i 3)) & (EQM (act x3) new) qa201_ss O)))).
+
+Definition qa110_sss := (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x1) (i 1))  qa210_ss (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x2) (i 1))  qa210_ss (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2))  qa120_ss (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x3) (i 2))  qa120_ss (if_then_elsem_ (EQM (reveal x3) (i 3) ) O
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qa111_ss  O)))))).
+
+Definition qa101_sss :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_ss (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_ss  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa111_ss
+ (if_then_elsem_ (EQM (to x3) (i 3))  qa102_ss  O)))))).
+(*************qa010 -> qbar, qa020, qa110, qa011*****************************)
+
+Definition qa020_sss := (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1))  qa120_ss
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qa021_ss  O)))).
+
+Definition qa011_sss := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021_ss  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021_ss
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa111_ss
+ (if_then_elsem_ (EQM (to x3) (i 3)) qa012_ss  O)))))).
+(************qa001 -> qabar, qa101, qa011, qa002*****************************)
+
+Definition qa002_sss:= (if_then_elsem_  (EQM (reveal x3) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa003_ss (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa102_ss
+ (if_then_elsem_ (EQM (to x3) (i 2) ) qa012_ss  O))))).
+
+
+(***********************************************************)
+ 
+Definition qa100_ssss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_sss (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qa110_sss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qa101_sss  O))))).
+
+
+Definition qa010_ssss := (if_then_elsem_ (EQM (reveal x2) (i 2)) & (EQM (to x1) (i 2)) qa020_sss (if_then_elsem_ (EQM (reveal x2) (i 1) ) O  (if_then_elsem_ (EQM (reveal x2) (i 3) ) O  (if_then_elsem_ (EQM (to x2) (i 1)) qa110_sss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qa011_sss O))))).
+
+Definition qa001_ssss :=  (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 1)) qa101_sss (if_then_elsem_ (EQM (to x2) (i 2)) qa011_sss (if_then_elsem_ (EQM (to x2) (i 3)) qa002_sss  O) ) )))).
+
+
+Definition t17 :=  msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qa100_ssss (if_then_elsem_ (EQM (to x1) (i 2)) qa010_ssss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qa001_ssss  O) ) )))).
+Definition phi6:= phi5 ++ [t17].
+
+(******************************phi7*********************************************)
+(****************************************************************************)
+
+
+
+
+
+Definition mphi6 := (conv_mylist_listm phi6).
+Definition x7 := (f mphi6).
+Definition mx6rn5 := (exp (G 0) (m x6) (r 5)).
+Definition mx6rn4 := (exp (G 0) (m x6) (r 4)).
+Definition mx6rn3 := (exp (G 0) (m x6) (r 3)).
+Definition mx6rn2 := (exp (G 0) (m x6) (r 2)).
+Definition mx6rn1 := (exp (G 0) (m x6) (r 1)).
+Definition qa222 := (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn3  (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) mx4rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) mx4rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) mx4rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x1) new) mx5rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x2) new) mx5rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x3) new) mx5rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x4) new) mx5rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x6) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x6) new)) & (EQM (act x1) new) mx6rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x6) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x6) new)) & (EQM (act x2) new) mx6rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x6) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x6) new)) & (EQM (act x3) new) mx6rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x6) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x6) new)) & (EQM (act x4) new) mx6rn3 (if_then_elsem_ (EQM (reveal x7) (i 3)) & (EQM (to x6) (i 3)) & (EQM (to x5) (i 3))& (notb (EQM (act x6) new)) & (EQM (act x5) new) mx6rn3 O))))))))))))))).
+
+Definition qa213:= (if_then_elsem_  (EQM (reveal x7) (i 2)) & (EQM (to x1) (i 2)) mx1rn2  (if_then_elsem_  (EQM (reveal x7) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x7) (i 2)) & (EQM (to x3) (i 2)) mx3rn2  (if_then_elsem_  (EQM (reveal x7) (i 2)) & (EQM (to x4) (i 2)) mx4rn2
+(if_then_elsem_  (EQM (reveal x7) (i 2)) & (EQM (to x5) (i 2)) mx5rn2  (if_then_elsem_  (EQM (reveal x7) (i 2)) & (EQM (to x6) (i 2)) mx6rn2 O)))))). 
+
+
+Definition qa123 :=  (if_then_elsem_  (EQM (reveal x7) (i 1)) & (EQM (to x1) (i 1)) mx1rn1  (if_then_elsem_  (EQM (reveal x7) (i 1)) & (EQM (to x2) (i 1)) mx2rn1  (if_then_elsem_  (EQM (reveal x7) (i 1)) & (EQM (to x3) (i 1)) mx3rn1  (if_then_elsem_  (EQM (reveal x7) (i 1)) & (EQM (to x4) (i 1)) mx4rn1
+(if_then_elsem_  (EQM (reveal x7) (i 1)) & (EQM (to x5) (i 1)) mx5rn1  (if_then_elsem_  (EQM (reveal x7) (i 1)) & (EQM (to x6) (i 1)) mx6rn1 O)))))). 
+
+(*************************************************************************************************)
+(************************************************************************************************)
+
+
+Definition qa221_s :=  (if_then_elsem_ (EQM (reveal x6) (i 3) ) O  (if_then_elsem_ (EQM (to x6) (i 3)) qa222 O) ).
+
+Definition qa212_s := (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x1) (i 2)) qa222   (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x2) (i 2)) qa222  (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x3) (i 2)) qa222  (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x4) (i 2)) qa222
+(if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x5) (i 2)) qa222 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa213   (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new)  qa213 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn3 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new)  qa213 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new)  qa213 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new)  qa213 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x1) new)  qa213 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x2) new)  qa213 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x3) new)  qa213 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x4) new)  qa213   O))))))))))))))).
+
+Definition qa203_s:=  (if_then_elsem_ (EQM (reveal x6) (i 2) ) O  (if_then_elsem_ (EQM (to x6) (i 2)) qa213 O) ).
+
+Definition qa122_s := (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x1) (i 1)) qa222   (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x2) (i 1)) qa222  (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x3) (i 1)) qa222  (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x4) (i 1)) qa222
+(if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x5) (i 1)) qa222  (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa123   (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa123  (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) qa123 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) qa123 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) qa123 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) qa123 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x1) new) qa123 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x2) new) qa123 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x3) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x3) new) qa123 (if_then_elsem_ (EQM (reveal x6) (i 3)) & (EQM (to x5) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x5) new)) & (EQM (act x4) new) qa123   O))))))))))))))).
+
+Definition qa113_s := (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x1) (i 1))  qa213   (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x2) (i 1))  qa213  (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x3) (i 1))  qa213  (if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x4) (i 1))  qa213
+(if_then_elsem_  (EQM (reveal x6) (i 1)) & (EQM (to x5) (i 1))  qa213 (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x1) (i 2))  qa123   (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x2) (i 2))  qa123  (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x3) (i 2))  qa123  (if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x4) (i 2))  qa123
+(if_then_elsem_  (EQM (reveal x6) (i 2)) & (EQM (to x5) (i 2))  qa123   O)))))))))). 
+
+Definition qa023_s :=  (if_then_elsem_ (EQM (reveal x6) (i 1) ) O  (if_then_elsem_ (EQM (to x6) (i 1)) qa123 O) ).
+(***********************************************************************************************)
+(***********************************************************************************************)
+Definition qa220_ss:= (if_then_elsem_ (EQM (reveal x5) (i 3) ) O  (if_then_elsem_ ((EQM (to x5) (i 3)) & (EQM (act x5) new)) qa221_s O) ).
+
+
+
+
+Definition qa211_ss := (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) qa221_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa221_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa221_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) qa221_s  (if_then_elsem_ (EQM (reveal x5) (i 3) ) O   (if_then_elsem_ (EQM (to x5) (i 3)) qa212_s O)))))).
+
+
+Definition qa202_ss := (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa203_s  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa203_s  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) qa203_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) qa203_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) qa203_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) qa203_s   (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 2)) qa212_s O) ))))))).
+
+Definition qa121_ss := (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) qa221_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa221_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa221_s    (if_then_elsem_ (EQM (reveal x5) (i 3) ) O  (if_then_elsem_ (EQM (to x5) (i 3)) qa122_s O))))).
+
+Definition qa112_ss:= (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) qa212_s  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) qa212_s  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x3) (i 1)) qa212_s  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x4) (i 1)) qa212_s (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) qa122_s   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa122_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa122_s   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) qa122_s   (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa113_s    (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa113_s  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) qa113_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) qa113_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) qa113_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) qa113_s O)))))))))))))).
+
+Definition qa103_ss := (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) qa203_s  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) qa203_s  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x3) (i 1)) qa203_s  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x4) (i 1)) qa203_s  (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 2)) qa113_s O)))))).
+
+
+Definition qa022_ss :=  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa122_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa122_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) qa122_s  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa023_s   (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa023_s  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) qa023_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x1) new) qa023_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x2) new) qa023_s (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x4) (i 3)) & (EQM (to x4) (i 3))& (notb (EQM (act x4) new)) & (EQM (act x3) new) qa023_s (if_then_elsem_ (EQM (reveal x5) (i 1) ) O (if_then_elsem_ (EQM (to x5) (i 1)) qa122_s O) )))))))))).
+
+Definition qa013_ss :=  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) qa023_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) qa023_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) qa023_s  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x4) (i 2)) qa023_s   (if_then_elsem_ (EQM (reveal x5) (i 1) ) O  (if_then_elsem_ (EQM (reveal x5) (i 2) ) O (if_then_elsem_ (EQM (to x5) (i 1)) qa113_s O))))))).
+(*************************************************************************************************)
+(*************************************************************************************************)
+
+Definition qa210_sss :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa220_ss  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa220_ss (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa220_ss (if_then_elsem_ (EQM (reveal x4) (i 3) ) O  (if_then_elsem_ ((EQM (to x4) (i 3)) & (EQM (act x4) new)) qa211_ss O) )))).
+
+Definition qa201_sss := (if_then_elsem_ (EQM (reveal x4) (i 2) ) O (if_then_elsem_ (EQM (reveal x4) (i 3) ) O   (if_then_elsem_ (EQM (to x4) (i 2)) qa211_ss    (if_then_elsem_ (EQM (to x4) (i 3))  qa202_ss O)))).
+
+Definition qa120_sss :=    (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa220_ss (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa220_ss    (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))   qa220_ss (if_then_elsem_ (EQM (reveal x4) (i 3) ) O  (if_then_elsem_ ((EQM (to x4) (i 3)) & (EQM (act x4) new))  qa121_ss O) )))).
+
+Definition qa111_sss := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) qa211_ss  (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) qa211_ss (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1)) qa211_ss   (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa211_ss (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa121_ss (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa121_ss  (if_then_elsem_ (EQM (reveal x4) (i 3) ) O (if_then_elsem_ (EQM (to x4) (i 3)) qa112_ss O)))))))).
+
+
+Definition qa102_sss := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa202_ss (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa202_ss (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))  qa202_ss (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa103_ss (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new)  qa103  (if_then_elsem_ (EQM (to x4) (i 2)) qa112_ss O) ))))).
+
+Definition qa021_sss := (if_then_elsem_ (EQM (reveal x4) (i 1) ) O (if_then_elsem_ (EQM (reveal x4) (i 3) ) O   (if_then_elsem_ (EQM (to x4) (i 1)) qa121_ss  (if_then_elsem_ (EQM (to x4) (i 3)) qa022_ss O )))).
+
+Definition qa012_sss :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa022_ss  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa022_ss (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 2)) qa022_ss  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa013_ss (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa013_ss   (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) qa112_ss O))))))).
+
+Definition qa003_sss := (if_then_elsem_ (EQM (reveal x4) (i 1) ) O (if_then_elsem_ (EQM (reveal x4) (i 2) ) O (if_then_elsem_ (EQM (to x4) (i 1)) qa103_ss (if_then_elsem_ (EQM (to x4) (i 2)) qa013_ss O)))).
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qa200_ssss := (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa210_sss (if_then_elsem_ (EQM (to x3 ) (i 3)) & (EQM (act x3) new) qa201_sss O)))).
+
+Definition qa110_ssss := (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x1) (i 1))  qa210_sss (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x2) (i 1))  qa210_sss (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2))  qa120_sss (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x3) (i 2))  qa120_sss (if_then_elsem_ (EQM (reveal x3) (i 3) ) O
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qa111_sss  O)))))).
+
+Definition qa101_ssss :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_sss (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_sss  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa111_sss
+ (if_then_elsem_ (EQM (to x3) (i 3))  qa102_sss  O)))))).
+(*************qa010 -> qbar, qa020, qa110, qa011*****************************)
+
+Definition qa020_ssss := (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1))  qa120_sss
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qa021_sss  O)))).
+
+Definition qa011_ssss := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021_sss  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021_sss
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa111_sss
+ (if_then_elsem_ (EQM (to x3) (i 3)) qa012_sss  O)))))).
+(************qa001 -> qabar, qa101, qa011, qa002*****************************)
+
+Definition qa002_ssss:= (if_then_elsem_  (EQM (reveal x3) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa003_sss (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa102_sss
+ (if_then_elsem_ (EQM (to x3) (i 2) ) qa012_sss  O))))).
+
+
+(***********************************************************)
+ 
+Definition qa100_sssss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_ssss (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qa110_ssss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qa101_ssss  O))))).
+
+
+Definition qa010_sssss := (if_then_elsem_ (EQM (reveal x2) (i 2)) & (EQM (to x1) (i 2)) qa020_ssss (if_then_elsem_ (EQM (reveal x2) (i 1) ) O  (if_then_elsem_ (EQM (reveal x2) (i 3) ) O  (if_then_elsem_ (EQM (to x2) (i 1)) qa110_ssss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qa011_ssss O))))).
+
+Definition qa001_sssss :=  (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 1)) qa101_ssss (if_then_elsem_ (EQM (to x2) (i 2)) qa011_ssss (if_then_elsem_ (EQM (to x2) (i 3)) qa002_ssss  O) ) )))).
+
+
+Definition t18 :=  msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qa100_sssss (if_then_elsem_ (EQM (to x1) (i 2)) qa010_sssss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qa001_sssss  O) ) )))).
+Definition phi7:= phi6 ++ [t18].
+
+
+
+
+
+
+
+
+
+
+
+(******************************************************************************************************************************************************)
+(******************************************************************************************************************************************************)
+(***********************protocol Pi2 : add transitions to qa2001************)
+(***************************************************************************)
+
+
+
+Definition phi21 := phi1.
+Definition phi22 := phi2.
+Definition phi23 := phi3.
+
+(*****************alpha = 3, beta =1**********************)
+Definition qb102 :=   (if_then_elsem_ (EQM (reveal  x4) (i 1) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) (grn 4) (if_then_elsem_ (EQM (reveal  x4) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) (grn 4)  (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) mx2rn2
+(if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) mx1rn1
+
+ (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1
+   (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn1  (if_then_elsem_ (EQM (to x4) (i 3)) (grn 3) O) ))))))).
+(***********alpha=3, beta=2******************************)
+
+Definition qb012 :=  (if_then_elsem_ (EQM (reveal  x4) (i 2) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) (grn 4) (if_then_elsem_ (EQM (reveal  x4) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) (grn 4)   (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) mx2rn2 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) mx1rn1  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2   (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn3    (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) (grn 1) O))))))))).
+
+(**************************************************************************************************)
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qb101_s :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201 (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa111
+ (if_then_elsem_ (EQM (to x3) (i 3))  qb102  O)))))).
+
+
+(*************qa010 -> qbar, qa020, qa110, qa011*****************************)
+Definition qb011_s := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa111
+ (if_then_elsem_ (EQM (to x3) (i 3)) qb012  O)))))).
+
+
+(************qa001 -> qabar, qa101, qa011, qa002*****************************)
+Definition qb002_s:= (if_then_elsem_  (EQM (reveal x3) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa003 (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qb102
+ (if_then_elsem_ (EQM (to x3) (i 2) ) qb012  O))))).
+
+
+
+
+
+
+(***********************************************************)
+
+Definition qb100_ss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_s (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qa110_s  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qb101_s  O))))).
+
+
+Definition qb001_ss:=  (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 1)) qb101_s (if_then_elsem_ (EQM (to x2) (i 2)) qb011_s (if_then_elsem_ (EQM (to x2) (i 3)) qb002_s  O) ) )))).
+
+
+
+
+
+
+Definition t25 :=  msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qb100_ss (if_then_elsem_ (EQM (to x1) (i 2)) qa010_ss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qb001_ss  O) ) )))).
+Definition phi24:= phi23 ++ [t25].
+
+(*********************************phi25***********************************************************)
+(*************************************************************************************************)
+
+
+(*********************alpha = 3, beta =1**********)
+
+Definition qb112:= (if_then_elsem_ (EQM (reveal  x5) (i 1) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) (grn 4)
+(*********************alpha = 3, beta=2****************************)
+  (if_then_elsem_ (EQM (reveal  x5) (i 2) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) (grn 4) (if_then_elsem_ (EQM (reveal  x5) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) (grn 4)
+
+    (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) mx2rn2 
+ (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) mx1rn1
+    (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) mx1rn1   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) mx3rn3     (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2  O)))))))))).
+
+
+
+
+(*******************************************************************************************************************)
+(********************************************************************************************************************)
+Definition qb111_s := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) qa211  (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) qa211 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1)) qa211   (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa211 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa121 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa121  (if_then_elsem_ (EQM (reveal x4) (i 3) ) O (if_then_elsem_ (EQM (to x4) (i 3)) qb112 O)))))))).
+
+
+Definition qb102_s := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa202 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa202 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))  qa202 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa103 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new)  qa103  (if_then_elsem_ (EQM (to x4) (i 2)) qb112 O) ))))).
+
+Definition qb012_s :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa022  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa022 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 2)) qa022  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa013 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa013   (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) qb112 O))))))).
+
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qb110_ss := (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x1) (i 1))  qa210_s (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x2) (i 1))  qa210_s (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2))  qa120_s (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x3) (i 2))  qa120_s (if_then_elsem_ (EQM (reveal x3) (i 3) ) O
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qb111_s  O)))))).
+
+Definition qb101_ss :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_s (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_s  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qb111_s
+ (if_then_elsem_ (EQM (to x3) (i 3))  qa102_s  O)))))).
+(*************qa010 -> qbar, qa020, qa110, qa011*****************************)
+
+
+Definition qb011_ss := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021_s  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021_s
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qb111_s
+ (if_then_elsem_ (EQM (to x3) (i 3)) qb012_s  O)))))).
+
+
+
+
+
+
+(***********************************************************)
+
+Definition qb100_sss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_ss (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qb110_ss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qb101_ss  O))))).
+
+
+Definition qb010_sss := (if_then_elsem_ (EQM (reveal x2) (i 2)) & (EQM (to x1) (i 2)) qa020_ss (if_then_elsem_ (EQM (reveal x2) (i 1) ) O  (if_then_elsem_ (EQM (reveal x2) (i 3) ) O  (if_then_elsem_ (EQM (to x2) (i 1)) qb110_ss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qb011_ss O))))).
+
+Definition t26 := msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qb100_sss (if_then_elsem_ (EQM (to x1) (i 2)) qb010_sss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qa001_sss  O) ) )))).
+Definition phi25:= phi24 ++ [t26].
+
+
+
+
+
+
+(************************************************************************************)
+(************************************************************************************)
+(************************Protocol Pi2'': replace the output grn4 by mx12rn2 , mx13rn1 in the term qb2001 in Pi2**********)
+(************************************************************************************************************************)
+
+
+
+Definition phi31 := phi1.
+Definition phi32 := phi2.
+Definition phi33 := phi3.
+Definition qc102 :=   (if_then_elsem_ (EQM (reveal  x4) (i 1) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) mx2rn2 (if_then_elsem_ (EQM (reveal  x4) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) mx3rn1 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) mx2rn2
+(if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) mx1rn1
+
+ (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1
+   (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn1  (if_then_elsem_ (EQM (to x4) (i 3)) (grn 3) O) ))))))).
+
+(***********alpha=3, beta=2******************************)
+
+Definition qc012 :=  (if_then_elsem_ (EQM (reveal  x4) (i 2) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) mx2rn2 (if_then_elsem_ (EQM (reveal  x4) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) mx3rn1  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) mx2rn2 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) mx1rn1  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2   (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn3    (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) (grn 1) O))))))))).
+
+(**************************************************************************************************)
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qc101_s :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201 (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa111
+ (if_then_elsem_ (EQM (to x3) (i 3))  qc102  O)))))).
+
+
+(*************qa010 -> qbar, qa020, qa110, qa011*****************************)
+Definition qc011_s := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa111
+ (if_then_elsem_ (EQM (to x3) (i 3)) qc012  O)))))).
+
+
+(************qa001 -> qabar, qa101, qa011, qa002*****************************)
+Definition qc002_s:= (if_then_elsem_  (EQM (reveal x3) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa003 (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qc102
+ (if_then_elsem_ (EQM (to x3) (i 2) ) qc012  O))))).
+
+
+
+
+
+
+(***********************************************************)
+
+Definition qc100_ss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_s (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qa110_s  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qc101_s  O))))).
+
+
+Definition qc001_ss:=  (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 1)) qc101_s (if_then_elsem_ (EQM (to x2) (i 2)) qc011_s (if_then_elsem_ (EQM (to x2) (i 3)) qc002_s  O) ) )))).
+
+
+
+
+
+
+Definition t35 :=  msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qc100_ss (if_then_elsem_ (EQM (to x1) (i 2)) qa010_ss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qc001_ss  O) ) )))).
+Definition phi34:= phi33 ++ [t35].
+
+(*********************************phi25***********************************************************)
+(*************************************************************************************************)
+(*********************alpha = 3, beta =1**********)
+
+Definition qc112:= (if_then_elsem_ (EQM (reveal  x5) (i 1) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) mx2rn2
+(*********************alpha = 3, beta=2****************************)
+  (if_then_elsem_ (EQM (reveal  x5) (i 2) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) mx2rn2 (if_then_elsem_ (EQM (reveal  x5) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) mx3rn1
+
+ (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) mx2rn2 
+ (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) mx1rn1
+    (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) mx1rn1   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) mx3rn3     (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2  O)))))))))).
+
+
+
+
+(*******************************************************************************************************************)
+(********************************************************************************************************************)
+Definition qc111_s := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) qa211  (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) qa211 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1)) qa211   (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa211 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa121 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa121  (if_then_elsem_ (EQM (reveal x4) (i 3) ) O (if_then_elsem_ (EQM (to x4) (i 3)) qc112 O)))))))).
+
+
+Definition qc102_s := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa202 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa202 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))  qa202 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa103 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new)  qa103  (if_then_elsem_ (EQM (to x4) (i 2)) qc112 O) ))))).
+
+Definition qc012_s :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa022  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa022 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 2)) qa022  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa013 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa013   (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) qc112 O))))))).
+
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qc110_ss := (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x1) (i 1))  qa210_s (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x2) (i 1))  qa210_s (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2))  qa120_s (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x3) (i 2))  qa120_s (if_then_elsem_ (EQM (reveal x3) (i 3) ) O
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qc111_s  O)))))).
+
+Definition qc101_ss :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_s (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_s  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qc111_s
+ (if_then_elsem_ (EQM (to x3) (i 3))  qa102_s  O)))))).
+(*************qa010 -> qbar, qa020, qa110, qa011*****************************)
+
+
+Definition qc011_ss := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021_s  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021_s
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qc111_s
+ (if_then_elsem_ (EQM (to x3) (i 3)) qc012_s  O)))))).
+
+
+
+
+
+
+(***********************************************************)
+
+Definition qc100_sss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_ss (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qc110_ss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qc101_ss  O))))).
+
+
+Definition qc010_sss := (if_then_elsem_ (EQM (reveal x2) (i 2)) & (EQM (to x1) (i 2)) qa020_ss (if_then_elsem_ (EQM (reveal x2) (i 1) ) O  (if_then_elsem_ (EQM (reveal x2) (i 3) ) O  (if_then_elsem_ (EQM (to x2) (i 1)) qc110_ss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qc011_ss O))))).
+
+Definition t36 := msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qc100_sss (if_then_elsem_ (EQM (to x1) (i 2)) qc010_sss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qa001_sss  O) ) )))).
+Definition phi35:= phi34 ++ [t36].
+
+
+(******************************Protocol Pi2' : replace the output grn4 by grn21 in the term qb2001 in Pi2********)
+(****************************************************************************************************************)
+
+Definition grn21:= (exp (G 0) (exp (G 0) (g 0) (r 2)) (r 1)).
+Definition phi41 := phi1.
+Definition phi42 := phi2.
+Definition phi43 := phi3.
+
+
+
+(*****************alpha = 3, beta =1**********************)
+Definition qd102 :=   (if_then_elsem_ (EQM (reveal  x4) (i 1) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) grn21 (if_then_elsem_ (EQM (reveal  x4) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) grn21 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) mx2rn2
+(if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) mx1rn1
+
+ (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1
+   (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn1  (if_then_elsem_ (EQM (to x4) (i 3)) (grn 3) O) ))))))).
+(***********alpha=3, beta=2******************************)
+
+Definition qd012 :=  (if_then_elsem_ (EQM (reveal  x4) (i 2) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) grn21 (if_then_elsem_ (EQM (reveal  x4) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) grn21   (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) mx2rn2 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) mx1rn1  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2   (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) mx2rn3    (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) (grn 1) O))))))))).
+
+(**************************************************************************************************)
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qd101_s :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201 (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qa111
+ (if_then_elsem_ (EQM (to x3) (i 3))  qd102  O)))))).
+
+
+(*************qa010 -> qdar, qa020, qa110, qa011*****************************)
+Definition qd011_s := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qa111
+ (if_then_elsem_ (EQM (to x3) (i 3)) qd012  O)))))).
+
+
+(************qa001 -> qabar, qa101, qa011, qa002*****************************)
+Definition qd002_s:= (if_then_elsem_  (EQM (reveal x3) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa003 (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qd102
+ (if_then_elsem_ (EQM (to x3) (i 2) ) qd012  O))))).
+
+
+
+
+
+
+(***********************************************************)
+
+Definition qd100_ss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_s (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qa110_s  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qd101_s  O))))).
+
+
+Definition qd001_ss:=  (if_then_elsem_ (EQM (reveal x2) (i 1) ) O (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 1)) qd101_s (if_then_elsem_ (EQM (to x2) (i 2)) qd011_s (if_then_elsem_ (EQM (to x2) (i 3)) qd002_s  O) ) )))).
+
+
+
+
+
+
+Definition t45 :=  msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qd100_ss (if_then_elsem_ (EQM (to x1) (i 2)) qa010_ss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qd001_ss  O) ) )))).
+Definition phi44:= phi43 ++ [t45].
+
+(*********************************phi25***********************************************************)
+(*************************************************************************************************)
+
+(*********************alpha = 3, beta=2****************************)
+Definition qd112:= (if_then_elsem_ (EQM (reveal  x5) (i 1) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 1))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) grn21
+(*********************alpha = 3, beta=2****************************)
+  (if_then_elsem_ (EQM (reveal  x5) (i 2) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) grn21 (if_then_elsem_ (EQM (reveal  x5) (i 3) ) & (EQM (to  x3) (i 3)) &(EQM (to x2) (i 2))&(EQM (to x1) (i 3)) & (notb (EQM ( act x3) new)) &(EQM (act x1) new) &(EQM (m x2) (grn 1)) &(EQM (m  x3) (grn 2)) grn21
+
+  (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x2) (i 1)) mx2rn2 
+ (if_then_elsem_  (EQM (reveal x5) (i 1)) & (EQM (to x1) (i 1)) mx1rn1
+    (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x2) (i 2)) mx2rn2  (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x1) (i 2)) mx1rn1   (if_then_elsem_  (EQM (reveal x5) (i 2)) & (EQM (to x3) (i 2)) mx3rn3     (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) mx3rn1  (if_then_elsem_ (EQM (reveal x5) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new) mx3rn2  O)))))))))).
+
+
+
+
+
+(*******************************************************************************************************************)
+(********************************************************************************************************************)
+Definition qd111_s := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1)) qa211  (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1)) qa211 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1)) qa211   (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa211 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa121 (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x3) (i 2)) qa121  (if_then_elsem_ (EQM (reveal x4) (i 3) ) O (if_then_elsem_ (EQM (to x4) (i 3)) qd112 O)))))))).
+
+
+Definition qd102_s := (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x1) (i 1))  qa202 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x2) (i 1))  qa202 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 1))  qa202 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new)  qa103 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x2) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x2) new)  qa103  (if_then_elsem_ (EQM (to x4) (i 2)) qd112 O) ))))).
+
+Definition qd012_s :=  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x1) (i 2)) qa022  (if_then_elsem_ (EQM (reveal x4) (i 2)) & (EQM (to x2) (i 2)) qa022 (if_then_elsem_ (EQM (reveal x4) (i 1)) & (EQM (to x3) (i 2)) qa022  (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x2) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x2) new)) & (EQM (act x1) new) qa013 (if_then_elsem_  (EQM (reveal x4) (i 3)) & (EQM (to x3) (i 3)) & (EQM (to x1) (i 3))& (notb (EQM (act x3) new)) & (EQM (act x1) new) qa013   (if_then_elsem_ (EQM (reveal x4) (i 1) ) O  (if_then_elsem_ (EQM (to x4) (i 1)) qd112 O))))))).
+
+
+(********************************************************************************************)
+(*******************************************************************************************)
+
+Definition qd110_ss := (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x1) (i 1))  qa210_s (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x2) (i 1))  qa210_s (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2))  qa120_s (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x3) (i 2))  qa120_s (if_then_elsem_ (EQM (reveal x3) (i 3) ) O
+ (if_then_elsem_ ((EQM (to x3) (i 3)) & (EQM (act x3) new))  qd111_s  O)))))).
+
+Definition qd101_ss :=  (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_s (if_then_elsem_ (EQM (reveal x3) (i 1)) & (EQM (to x3) (i 1))  qa201_s  (if_then_elsem_ (EQM (reveal x3) (i 2) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 2))  qd111_s
+ (if_then_elsem_ (EQM (to x3) (i 3))  qa102_s  O)))))).
+(*************qa010 -> qbar, qa020, qa110, qa011*****************************)
+
+
+Definition qd011_ss := (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x1) (i 2)) qa021_s  (if_then_elsem_ (EQM (reveal x3) (i 2)) & (EQM (to x2) (i 2)) qa021_s
+ (if_then_elsem_ (EQM (reveal x3) (i 1) ) O (if_then_elsem_ (EQM (reveal x3) (i 3) ) O (if_then_elsem_ (EQM (to x3) (i 1)) qd111_s
+ (if_then_elsem_ (EQM (to x3) (i 3)) qd012_s  O)))))).
+
+
+
+
+
+
+(***********************************************************)
+
+Definition qd100_sss := (if_then_elsem_ (EQM (reveal x2) (i 1)) & (EQM (to x1) (i 1)) qa200_ss (if_then_elsem_ (EQM (reveal x2) (i 2) ) O (if_then_elsem_ (EQM (reveal x2) (i 3) ) O (if_then_elsem_ (EQM (to x2) (i 2)) qd110_ss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qd101_ss  O))))).
+
+
+Definition qd010_sss := (if_then_elsem_ (EQM (reveal x2) (i 2)) & (EQM (to x1) (i 2)) qa020_ss (if_then_elsem_ (EQM (reveal x2) (i 1) ) O  (if_then_elsem_ (EQM (reveal x2) (i 3) ) O  (if_then_elsem_ (EQM (to x2) (i 1)) qd110_ss  (if_then_elsem_ (EQM (to x2 ) (i 3)) & (EQM (act x2) new) qd011_ss O))))).
+
+Definition t46 := msg (if_then_elsem_ (EQM (reveal x1) (i 1) ) O (if_then_elsem_ (EQM (reveal x1) (i 2) ) O (if_then_elsem_ (EQM (reveal x1) (i 3) ) O (if_then_elsem_ (EQM (to x1) (i 1)) qd100_sss (if_then_elsem_ (EQM (to x1) (i 2)) qd010_sss (if_then_elsem_ ((EQM (to x1) (i 3)) & (EQM (act x1) new)) qa001_sss  O) ) )))).
+Definition phi45:= phi44 ++ [t46].
+

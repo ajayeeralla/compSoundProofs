@@ -1,0 +1,612 @@
+Load "Example19".
+
+
+(*****************Fresh(G,g,a,b,c,d) /\ (clos_bol b)->[G;g;g^a;g^b;g^c; if_then_else_B b (g^ab) (g^bc)]~[G;g;g^a;g^b;g^c;g^d]***********************)
+
+Theorem Example20: forall (n n1 n2 n3 n4: nat), (Fresh [ n ; n1 ; n2 ; n3 ; n4] []  = true ) -> (clos_bol (fmb4  (g n) (exp (G n) (g n) (r n1)) (exp (G n) (g n) (r n2)) (exp (G n) (g n) (r n3))) = true) -> [ msg (G n) ; msg (g n); msg (exp (G n) (g n) (r n1)); msg (exp (G n) (g n) (r n2)); msg (exp (G n) (g n) (r n3)); msg (if_then_else_M (fmb4  (g n) (exp (G n) (g n) (r n1)) (exp (G n) (g n) (r n2)) (exp (G n) (g n) (r n3))) (exp (G n) (exp (G n) (g n) (r n1)) (r n2))  (exp (G n) (exp (G n) (g n) (r n2)) (r n3)))] ~   [ msg (G n) ; msg (g n); msg (exp (G n) (g n) (r n1)); msg (exp (G n) (g n) (r n2)); msg (exp (G n) (g n) (r n3)); msg (exp (G n) (g n) (r n4))].
+
+Proof. intros. 
+
+assert(H2 : Fresh[n;n1;n2;n4] [] = true).
+
+unfold Fresh in H.
+apply andb_prop in H. inversion H.
+unfold nodup_ilist in H1.
+unfold count_occur in H1.
+repeat rewrite <- beq_nat_refl in H1.
+assert(H3: beq_nat n1 n = false).
+destruct (beq_nat n1 n). simpl in H1.
+symmetry ; assumption; repeat reflexivity.
+reflexivity.
+assert(H4: beq_nat n2 n = false).
+destruct (beq_nat n2 n). rewrite H3 in H1 ; simpl in H1.
+symmetry; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H5: beq_nat n3 n =false).
+destruct (beq_nat n3 n) . rewrite H3 in H1; rewrite H4 in H1 . simpl in H1.
+symmetry ; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H6: beq_nat n4 n = false).
+destruct (beq_nat n4 n). 
+rewrite H3 in H1 ; rewrite H4 in H1 ; rewrite H5 in H1 .
+simpl in H1 .
+symmetry ; assumption ; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H7: beq_nat n2 n1 = false).
+destruct (beq_nat n2 n1).
+rewrite H3 in H1 ; rewrite H4 in H1 ; rewrite H5 in H1 ; rewrite H6 in H1 .
+simpl in H1.
+symmetry.  assumption ;reflexivity; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H8 : beq_nat n3 n1 = false).
+destruct (beq_nat n3 n1). rewrite H3 in H1; rewrite H4 in H1; rewrite H5 in H1; rewrite H6 in H1 ; rewrite H7 in H1. simpl in H1.
+symmetry ; assumption ; reflexivity ; reflexivity; reflexivity. reflexivity.
+assert(H9: beq_nat n4 n1 = false).
+
+destruct (beq_nat n4 n1). rewrite H3 in H1 ; rewrite H4 in H1 ; rewrite H5 in H1; rewrite H6 in H1 ; rewrite H7 in H1 ; rewrite H8 in H1; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+assert(H10: beq_nat n3 n2 = false).
+destruct (beq_nat n3 n2).   rewrite H3 in H1 ; rewrite H4 in H1 ; rewrite H5 in H1; rewrite H6 in H1 ; rewrite H7 in H1 ; rewrite H8 in H1; rewrite H9 in H1 ;simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+assert(H11 : beq_nat n4 n2 = false).
+destruct (beq_nat n4 n2). 
+ rewrite H3 in H1 ; rewrite H4 in H1 ; rewrite H5 in H1; rewrite H6 in H1 ; rewrite H7 in H1 ; rewrite H8 in H1; rewrite H9 in H1 ; rewrite H10 in H1 ; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity. 
+
+assert(H12 : beq_nat n4 n3 = false).
+destruct (beq_nat n4 n3).
+rewrite H3 in H1 ; rewrite H4 in H1 ; rewrite H5 in H1; rewrite H6 in H1 ; rewrite H7 in H1 ; rewrite H8 in H1; rewrite H9 in H1 ; rewrite H10 in H1 ; rewrite H11 in H1;simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity. 
+(**************************************************************************************)
+(*************************************************************************************)
+unfold Fresh. unfold nodup_ilist. unfold count_occur. repeat rewrite <- beq_nat_refl.
+ rewrite H3; rewrite H4;rewrite H6. simpl. rewrite H7;rewrite H9; rewrite H11.
+simpl. reflexivity.
+
+
+apply DDH in H2.
+pose proof(FRESHIND).
+
+assert (Frccl:  (clos_mylist ( [msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n1));
+        msg (exp (G n) (g n) (r n2));
+        msg
+          (exp (G n)
+             (exp (G n) (g n) (r n1)) 
+             (r n2))] ++ [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n1));
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n4))])= true) /\ (Fresh [n3] ([msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n1));
+        msg (exp (G n) (g n) (r n2));
+        msg
+          (exp (G n)
+             (exp (G n) (g n) (r n1)) 
+             (r n2))] ++ [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n1));
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n4))])= true) /\ (Fresh [n3]( [msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n1));
+        msg (exp (G n) (g n) (r n2));
+        msg
+          (exp (G n)
+             (exp (G n) (g n) (r n1)) 
+             (r n2))] ++ [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n1));
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n4))])= true) /\ ( [msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n1));
+      msg (exp (G n) (g n) (r n2));
+      msg
+        (exp (G n)
+           (exp (G n) (g n) (r n1)) (r n2))] ~
+     [msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n1));
+     msg (exp (G n) (g n) (r n2));
+     msg (exp (G n) (g n) (r n4))])).
+repeat (split); repeat (reflexivity). 
+simpl.
+
+unfold Fresh in H.
+apply andb_prop in H. inversion H.
+unfold nodup_ilist in H3.
+unfold count_occur in H3.
+repeat rewrite <- beq_nat_refl in H3.
+assert(H5: beq_nat n1 n = false).
+destruct (beq_nat n1 n). simpl in H1.
+symmetry ; assumption; repeat reflexivity.
+reflexivity.
+assert(H6: beq_nat n2 n = false).
+destruct (beq_nat n2 n). rewrite H5 in H3 ; simpl in H3.
+symmetry; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H7: beq_nat n3 n =false).
+destruct (beq_nat n3 n) . rewrite H5 in H3; rewrite H6 in H3 . simpl in H3.
+symmetry ; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H8: beq_nat n4 n = false).
+destruct (beq_nat n4 n). 
+rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3 .
+simpl in H3 .
+symmetry ; assumption ; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H9: beq_nat n2 n1 = false).
+destruct (beq_nat n2 n1).
+rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3 ; rewrite H8 in H3 .
+simpl in H3.
+symmetry.  assumption ;reflexivity; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H10 : beq_nat n3 n1 = false).
+destruct (beq_nat n3 n1). rewrite H5 in H3; rewrite H6 in H3; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3. simpl in H3.
+symmetry ; assumption ; reflexivity ; reflexivity; reflexivity. reflexivity.
+assert(H11: beq_nat n4 n1 = false).
+
+destruct (beq_nat n4 n1). rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3 ; rewrite H10 in H3; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+assert(H12: beq_nat n3 n2 = false).
+destruct (beq_nat n3 n2).   rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3 ; rewrite H10 in H3; rewrite H11 in H3 ;simpl in H3; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+assert(H13 : beq_nat n4 n2 = false).
+destruct (beq_nat n4 n2). 
+   rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3 ; rewrite H10 in H3; rewrite H11 in H3 ;rewrite H12 in H3; simpl in H3; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+
+assert(H14 : beq_nat n4 n3 = false).
+destruct (beq_nat n4 n3).
+   rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3 ; rewrite H10 in H3; rewrite H11 in H3 ;rewrite H12 in H3; rewrite H13 in H3; simpl in H3; symmetry;  assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+(*******************************************************)
+
+(*******************************************************)
+
+SearchAbout beq_nat.
+rewrite Nat.eqb_sym. rewrite H7. rewrite Nat.eqb_sym. rewrite H10.  rewrite Nat.eqb_sym. rewrite H12. rewrite H14. reflexivity. 
+
+
+simpl.
+unfold Fresh in H.
+apply andb_prop in H. inversion H.
+unfold nodup_ilist in H3.
+unfold count_occur in H3.
+repeat rewrite <- beq_nat_refl in H3.
+assert(H5: beq_nat n1 n = false).
+destruct (beq_nat n1 n). simpl in H1.
+symmetry ; assumption; repeat reflexivity.
+reflexivity.
+assert(H6: beq_nat n2 n = false).
+destruct (beq_nat n2 n). rewrite H5 in H3 ; simpl in H3.
+symmetry; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H7: beq_nat n3 n =false).
+destruct (beq_nat n3 n) . rewrite H5 in H3; rewrite H6 in H3 . simpl in H3.
+symmetry ; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H8: beq_nat n4 n = false).
+destruct (beq_nat n4 n). 
+rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3 .
+simpl in H3 .
+symmetry ; assumption ; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H9: beq_nat n2 n1 = false).
+destruct (beq_nat n2 n1).
+rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3 ; rewrite H8 in H3 .
+simpl in H3.
+symmetry.  assumption ;reflexivity; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H10 : beq_nat n3 n1 = false).
+destruct (beq_nat n3 n1). rewrite H5 in H3; rewrite H6 in H3; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3. simpl in H3.
+symmetry ; assumption ; reflexivity ; reflexivity; reflexivity. reflexivity.
+assert(H11: beq_nat n4 n1 = false).
+
+destruct (beq_nat n4 n1). rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3 ; rewrite H10 in H3; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+assert(H12: beq_nat n3 n2 = false).
+destruct (beq_nat n3 n2).   rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3 ; rewrite H10 in H3; rewrite H11 in H3 ;simpl in H3; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+assert(H13 : beq_nat n4 n2 = false).
+destruct (beq_nat n4 n2). 
+   rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3 ; rewrite H10 in H3; rewrite H11 in H3 ;rewrite H12 in H3; simpl in H3; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+
+assert(H14 : beq_nat n4 n3 = false).
+destruct (beq_nat n4 n3).
+   rewrite H5 in H3 ; rewrite H6 in H3 ; rewrite H7 in H3; rewrite H8 in H3 ; rewrite H9 in H3 ; rewrite H10 in H3; rewrite H11 in H3 ;rewrite H12 in H3; rewrite H13 in H3; simpl in H3; symmetry;  assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+rewrite Nat.eqb_sym.
+rewrite H7. rewrite Nat.eqb_sym. rewrite H10. rewrite Nat.eqb_sym. rewrite H12. rewrite H14.  simpl.
+reflexivity. apply H2.
+clear H1.
+
+assert(H4: ((msg (r n3)) +++ [msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n1));
+        msg (exp (G n) (g n) (r n2));
+        msg
+          (exp (G n)
+             (exp (G n) (g n) (r n1)) 
+             (r n2))]) ~
+       ( (msg (r n3)) +++ [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n1));
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n4))])).
+
+apply FRESHIND with (n1:=n3) (n2:=n3) in Frccl ; apply Frccl.
+
+pose proof(FUNCApp_expatpos). 
+
+simpl in H4.
+apply FUNCApp_expatpos with (p1:= 1)(p2:= 2) (p3:= 0) in H4.
+unfold exp_at_pos in H4.
+simpl in H4.
+
+apply RESTR2 with (n1:= 5) (n2:=0) (n3:=0) (l1:= [msg (r n3); msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n1));
+      msg (exp (G n) (g n) (r n2))]) (l2:=[]) (l3:=[]) (l1':=  [msg (r n3); msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n1));
+     msg (exp (G n) (g n) (r n2))]) (l2' := []) (l3':=[]) (x1:=  (msg (exp (G n) (exp (G n) (g n) (r n1)) (r n2))))
+(x2:= (msg (exp (G n) (g n) (r n3)))) (y1:= ( msg (exp (G n) (g n) (r n4)))) (y2:= (msg (exp (G n) (g n) (r n3)))) in H4.
+simpl in H4.
+apply FUNCApp_att4 with (p1:=2) (p2:=3) (p3:=4) (p4:= 5) in H4.
+unfold getelt_at_pos in H4. simpl in H4. 
+
+apply RESTR2 with (n1:= 6) (n2:=0) (n3:=0) (l1:= [msg (r n3); msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n1));
+      msg (exp (G n) (g n) (r n2)) ;msg (exp (G n) (g n) (r n3))]) (l2:=[]) (l3:=[]) (l1':=  [msg (r n3); msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n1));
+     msg (exp (G n) (g n) (r n2)); msg (exp (G n) (g n) (r n3))]) (l2' := []) (l3':=[]) (x1:=  (msg (exp (G n) (exp (G n) (g n) (r n1)) (r n2))))
+(x2:=  (bol
+        (fmb4 (g n) (exp (G n) (g n) (r n1))
+           (exp (G n) (g n) (r n2))
+            (exp (G n) (g n) (r n3)))))  (y1:= (msg (exp (G n) (g n) (r n4)))) (y2:= bol (fmb4 (g n) (exp (G n) (g n) (r n1)) (exp (G n) (g n) (r n2))
+          (exp (G n) (g n) (r n3)))) in H4.
+simpl in H4.
+
+assert(DDHbc: Fresh[n;n2;n3;n4] [] = true).
+
+clear H1.
+
+unfold Fresh in H.
+apply andb_prop in H. inversion H.
+unfold nodup_ilist in H1.
+unfold count_occur in H1.
+repeat rewrite <- beq_nat_refl in H1.
+assert(H5: beq_nat n1 n = false).
+destruct (beq_nat n1 n). simpl in H1.
+symmetry ; assumption; repeat reflexivity.
+reflexivity.
+assert(H6: beq_nat n2 n = false).
+destruct (beq_nat n2 n). rewrite H5 in H1 ; simpl in H1.
+symmetry; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H7: beq_nat n3 n =false).
+destruct (beq_nat n3 n) . rewrite H5 in H1; rewrite H6 in H1 . simpl in H1.
+symmetry ; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H8: beq_nat n4 n = false).
+destruct (beq_nat n4 n). 
+rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1 .
+simpl in H1 .
+symmetry ; assumption ; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H9: beq_nat n2 n1 = false).
+destruct (beq_nat n2 n1).
+rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1 ; rewrite H8 in H1 .
+simpl in H1.
+symmetry.  assumption ;reflexivity; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H10 : beq_nat n3 n1 = false).
+destruct (beq_nat n3 n1). rewrite H5 in H1; rewrite H6 in H1; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1. simpl in H1.
+symmetry ; assumption ; reflexivity ; reflexivity; reflexivity. reflexivity.
+assert(H11: beq_nat n4 n1 = false).
+
+destruct (beq_nat n4 n1). rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+assert(H12: beq_nat n3 n2 = false).
+destruct (beq_nat n3 n2).   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+assert(H13 : beq_nat n4 n2 = false).
+destruct (beq_nat n4 n2). 
+   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;rewrite H12 in H1; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+
+assert(H14 : beq_nat n4 n3 = false).
+destruct (beq_nat n4 n3).
+   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;rewrite H12 in H1; rewrite H13 in H1; simpl in H1; symmetry;  assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+unfold Fresh. simpl. repeat rewrite <- beq_nat_refl.
+rewrite Nat.eqb_sym.
+rewrite H6.  rewrite Nat.eqb_sym. rewrite H7. rewrite H12. rewrite H8.  simpl. rewrite H13. simpl.
+rewrite H14. simpl. 
+reflexivity. 
+
+
+
+apply DDH in DDHbc.
+assert (Fracl:  (clos_mylist ( [msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n2));
+        msg (exp (G n) (g n) (r n3));
+        msg
+          (exp (G n)
+             (exp (G n) (g n) (r n2)) 
+             (r n3))] ++ [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n3));
+       msg (exp (G n) (g n) (r n4))])= true) /\ (Fresh [n1] ([msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n2));
+        msg (exp (G n) (g n) (r n3));
+        msg
+          (exp (G n)
+             (exp (G n) (g n) (r n2)) 
+             (r n3))] ++ [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n3));
+       msg (exp (G n) (g n) (r n4))])= true) /\ (Fresh [n1]( [msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n2));
+        msg (exp (G n) (g n) (r n3));
+        msg
+          (exp (G n)
+             (exp (G n) (g n) (r n2)) 
+             (r n3))] ++ [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n3));
+       msg (exp (G n) (g n) (r n4))])= true) /\ ( [msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n2));
+      msg (exp (G n) (g n) (r n3));
+      msg
+        (exp (G n)
+           (exp (G n) (g n) (r n2)) (r n3))] ~
+     [msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n2));
+     msg (exp (G n) (g n) (r n3));
+     msg (exp (G n) (g n) (r n4))])).
+
+repeat (try split); repeat (try reflexivity). simpl. clear H1.
+
+
+
+unfold Fresh in H.
+apply andb_prop in H. inversion H.
+unfold nodup_ilist in H1.
+unfold count_occur in H1.
+repeat rewrite <- beq_nat_refl in H1.
+assert(H5: beq_nat n1 n = false).
+destruct (beq_nat n1 n). simpl in H1.
+symmetry ; assumption; repeat reflexivity.
+reflexivity.
+assert(H6: beq_nat n2 n = false).
+destruct (beq_nat n2 n). rewrite H5 in H1 ; simpl in H1.
+symmetry; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H7: beq_nat n3 n =false).
+destruct (beq_nat n3 n) . rewrite H5 in H1; rewrite H6 in H1 . simpl in H1.
+symmetry ; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H8: beq_nat n4 n = false).
+destruct (beq_nat n4 n). 
+rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1 .
+simpl in H1 .
+symmetry ; assumption ; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H9: beq_nat n2 n1 = false).
+destruct (beq_nat n2 n1).
+rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1 ; rewrite H8 in H1 .
+simpl in H1.
+symmetry.  assumption ;reflexivity; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H10 : beq_nat n3 n1 = false).
+destruct (beq_nat n3 n1). rewrite H5 in H1; rewrite H6 in H1; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1. simpl in H1.
+symmetry ; assumption ; reflexivity ; reflexivity; reflexivity. reflexivity.
+assert(H11: beq_nat n4 n1 = false).
+
+destruct (beq_nat n4 n1). rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+assert(H12: beq_nat n3 n2 = false).
+destruct (beq_nat n3 n2).   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+assert(H13 : beq_nat n4 n2 = false).
+destruct (beq_nat n4 n2). 
+   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;rewrite H12 in H1; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+
+assert(H14 : beq_nat n4 n3 = false).
+destruct (beq_nat n4 n3).
+   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;rewrite H12 in H1; rewrite H13 in H1; simpl in H1; symmetry;  assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+unfold Fresh. simpl. repeat rewrite <- beq_nat_refl.
+rewrite Nat.eqb_sym.
+rewrite H5.   rewrite H9. rewrite H10. rewrite H11. 
+reflexivity.  clear H1.
+simpl.
+
+unfold Fresh in H.
+apply andb_prop in H. inversion H.
+unfold nodup_ilist in H1.
+unfold count_occur in H1.
+repeat rewrite <- beq_nat_refl in H1.
+assert(H5: beq_nat n1 n = false).
+destruct (beq_nat n1 n). simpl in H1.
+symmetry ; assumption; repeat reflexivity.
+reflexivity.
+assert(H6: beq_nat n2 n = false).
+destruct (beq_nat n2 n). rewrite H5 in H1 ; simpl in H1.
+symmetry; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H7: beq_nat n3 n =false).
+destruct (beq_nat n3 n) . rewrite H5 in H1; rewrite H6 in H1 . simpl in H1.
+symmetry ; assumption ; reflexivity; reflexivity. reflexivity.
+assert(H8: beq_nat n4 n = false).
+destruct (beq_nat n4 n). 
+rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1 .
+simpl in H1 .
+symmetry ; assumption ; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H9: beq_nat n2 n1 = false).
+destruct (beq_nat n2 n1).
+rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1 ; rewrite H8 in H1 .
+simpl in H1.
+symmetry.  assumption ;reflexivity; reflexivity; reflexivity; reflexivity.
+reflexivity.
+assert(H10 : beq_nat n3 n1 = false).
+destruct (beq_nat n3 n1). rewrite H5 in H1; rewrite H6 in H1; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1. simpl in H1.
+symmetry ; assumption ; reflexivity ; reflexivity; reflexivity. reflexivity.
+assert(H11: beq_nat n4 n1 = false).
+
+destruct (beq_nat n4 n1). rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+assert(H12: beq_nat n3 n2 = false).
+destruct (beq_nat n3 n2).   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+assert(H13 : beq_nat n4 n2 = false).
+destruct (beq_nat n4 n2). 
+   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;rewrite H12 in H1; simpl in H1; symmetry ; assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+
+
+assert(H14 : beq_nat n4 n3 = false).
+destruct (beq_nat n4 n3).
+   rewrite H5 in H1 ; rewrite H6 in H1 ; rewrite H7 in H1; rewrite H8 in H1 ; rewrite H9 in H1 ; rewrite H10 in H1; rewrite H11 in H1 ;rewrite H12 in H1; rewrite H13 in H1; simpl in H1; symmetry;  assumption ; reflexivity; reflexivity; reflexivity; reflexivity. reflexivity.
+rewrite Nat.eqb_sym.
+rewrite H5.   rewrite H9. rewrite H10. rewrite H11. 
+reflexivity.  clear H1.
+apply DDHbc.
+
+
+assert(H6: ((msg (r n1)) +++ [msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n2));
+        msg (exp (G n) (g n) (r n3));
+        msg
+          (exp (G n)
+             (exp (G n) (g n) (r n2)) 
+             (r n3))]) ~
+       ( (msg (r n1)) +++ [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n3));
+       msg (exp (G n) (g n) (r n4))])).
+
+apply FRESHIND with (n1:=n1) (n2:=n1) in Fracl; apply Fracl.
+simpl in H6.
+
+
+apply FUNCApp_expatpos with (p1:= 1)(p2:= 2) (p3:= 0) in H6.
+unfold exp_at_pos in H6.
+simpl in H6.
+
+
+apply RESTR2 with (n1:= 5) (n2:=0) (n3:=0) (l1:= [msg (r n1); msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n2));
+      msg (exp (G n) (g n) (r n3))]) (l2:=[]) (l3:=[]) (l1':=  [msg (r n1); msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n2));
+     msg (exp (G n) (g n) (r n3))]) (l2' := []) (l3':=[]) (x1:=  (msg (exp (G n) (exp (G n) (g n) (r n2)) (r n3))))
+(x2:= (msg (exp (G n) (g n) (r n1)))) (y1:= ( msg (exp (G n) (g n) (r n4)))) (y2:= (msg (exp (G n) (g n) (r n1)))) in H6.
+simpl in H6.
+
+apply RESTR2 with (n1:= 4) (n2:=0) (n3:=1) (l1:= [msg (r n1); msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n2))]) (l2:=[]) (l3:=[msg (exp (G n) (exp (G n) (g n) (r n2)) (r n3))]) (l1':=  [msg (r n1); msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n2))]) (l2' := []) (l3':=[ msg (exp (G n) (g n) (r n4))]) (x1:=  (msg (exp (G n) (g n) (r n3))))
+(x2:= (msg (exp (G n) (g n) (r n1)))) (y1:= ( msg (exp (G n) (g n) (r n3)))) (y2:= (msg (exp (G n) (g n) (r n1)))) in H6.
+simpl in H6.
+
+apply RESTR2 with (n1:= 3) (n2:=0) (n3:=2) (l1 := [msg (r n1); msg (G n); msg (g n)]) (l2:=[]) (l3:= [msg (exp (G n) (g n) (r n3));
+      msg (exp (G n) (exp (G n) (g n) (r n2)) (r n3))]) (l1':= [msg (r n1); msg (G n); msg (g n)]) (l2':=[]) (l3':= [ msg (exp (G n) (g n) (r n3));
+     msg (exp (G n) (g n) (r n4))]) (x1:= (msg (exp (G n) (g n) (r n2)))) (x2:= msg (exp (G n) (g n) (r n1))) (y1:= (msg (exp (G n) (g n) (r n2)))) (y2:= msg (exp (G n) (g n) (r n1))) in H6.
+simpl in H6.
+
+apply FUNCApp_att4 with (p1:=2) (p2:=3) (p3:=4) (p4:= 5) in H6.
+unfold getelt_at_pos in H6. simpl in H6.
+
+apply RESTR2 with (n1:= 6) (n2:=0) (n3:=0) (l1:= [msg (r n1); msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n1));
+      msg (exp (G n) (g n) (r n2));
+      msg (exp (G n) (g n) (r n3))]) (l2:= []) (l3:= []) (l1':=  [msg (r n1); msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n1));
+     msg (exp (G n) (g n) (r n2));
+     msg (exp (G n) (g n) (r n3))]) (l2':= []) (l3':= []) 
+(x1:= (msg (exp (G n) (exp (G n) (g n) (r n2)) (r n3)))) (x2:= (bol
+        (fmb4 (g n) (exp (G n) (g n) (r n1))
+           (exp (G n) (g n) (r n2))
+           (exp (G n) (g n) (r n3))))) (y1:= (msg (exp (G n) (g n) (r n4)))) 
+(y2:= (bol (fmb4 (g n) (exp (G n) (g n) (r n1))
+          (exp (G n) (g n) (r n2))
+          (exp (G n) (g n) (r n3))))) in H6.
+simpl in H6.
+pose proof(IFBRANCH_M).
+assert (ifbr: ([msg (G n); msg (g n); msg (exp (G n) (g n) (r n1));
+ msg (exp (G n) (g n) (r n2));
+ msg (exp (G n) (g n) (r n3))] ++[ bol
+       (fmb4 (g n) (exp (G n) (g n) (r n1))
+          (exp (G n) (g n) (r n2))
+          (exp (G n) (g n) (r n3))); msg
+   (if_then_else_M (fmb4 (g n) (exp (G n) (g n) (r n1))
+         (exp (G n) (g n) (r n2))
+         (exp (G n) (g n) (r n3)))
+      (exp (G n) (exp (G n) (g n) (r n1)) (r n2))
+      (exp (G n) (exp (G n) (g n) (r n2)) (r n3)))]) ~
+([msg (G n); msg (g n); msg (exp (G n) (g n) (r n1));
+msg (exp (G n) (g n) (r n2));
+msg (exp (G n) (g n) (r n3))] ++
+[bol (fmb4 (g n) (exp (G n) (g n) (r n1))
+          (exp (G n) (g n) (r n2))
+          (exp (G n) (g n) (r n3))); msg (if_then_else_M (fmb4 (g n) (exp (G n) (g n) (r n1))
+         (exp (G n) (g n) (r n2))
+         (exp (G n) (g n) (r n3)))
+       (exp (G n) (g n) (r n4))
+      (exp (G n) (g n) (r n4)))])).
+
+apply IFBRANCH_M with (n:=5) (ml1:= [msg (G n); msg (g n); msg (exp (G n) (g n) (r n1));
+ msg (exp (G n) (g n) (r n2));
+ msg (exp (G n) (g n) (r n3))]) (ml2:= [msg (G n); msg (g n); msg (exp (G n) (g n) (r n1));
+ msg (exp (G n) (g n) (r n2));
+ msg (exp (G n) (g n) (r n3))])  (b:= (fmb4 (g n) (exp (G n) (g n) (r n1))
+      (exp (G n) (g n) (r n2)) (exp (G n) (g n) (r n3)))) (b':= (fmb4 (g n) (exp (G n) (g n) (r n1))
+      (exp (G n) (g n) (r n2)) (exp (G n) (g n) (r n3))))
+ (x :=  (exp (G n) (exp (G n) (g n) (r n1)) (r n2))) (x':= (exp (G n) (g n) (r n4)))
+(y:=  (exp (G n) (exp (G n) (g n) (r n2)) (r n3))) (y':= (exp (G n) (g n) (r n4))).
+
+simpl. 
+pose proof(RESTR1).
+apply RESTR1 with (n:= 0) (m:=7) (l1:=[])   (l2:= [msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n1));
+      msg (exp (G n) (g n) (r n2));
+      msg (exp (G n) (g n) (r n3));
+      bol
+        (fmb4 (g n) (exp (G n) (g n) (r n1))
+           (exp (G n) (g n) (r n2))
+           (exp (G n) (g n) (r n3)));
+      msg (exp (G n) (exp (G n) (g n) (r n1)) (r n2))])  (l1':=[])  (l2':= [msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n1));
+     msg (exp (G n) (g n) (r n2));
+     msg (exp (G n) (g n) (r n3));
+     bol
+       (fmb4 (g n) (exp (G n) (g n) (r n1))
+          (exp (G n) (g n) (r n2))
+          (exp (G n) (g n) (r n3)));
+     msg (exp (G n) (g n) (r n4))]) in H4.
+simpl in H4.
+apply H4.
+
+apply RESTR1 with (n:=0) (m:=7) (l1:=[]) (l2:= [ msg (G n); msg (g n);
+      msg (exp (G n) (g n) (r n1));
+      msg (exp (G n) (g n) (r n2));
+      msg (exp (G n) (g n) (r n3));
+      bol
+        (fmb4 (g n) (exp (G n) (g n) (r n1))
+           (exp (G n) (g n) (r n2))
+           (exp (G n) (g n) (r n3)));
+      msg (exp (G n) (exp (G n) (g n) (r n2)) (r n3))]) (l1':= []) (l2':= [ msg (G n); msg (g n);
+     msg (exp (G n) (g n) (r n1));
+     msg (exp (G n) (g n) (r n2));
+     msg (exp (G n) (g n) (r n3));
+     bol
+       (fmb4 (g n) (exp (G n) (g n) (r n1))
+          (exp (G n) (g n) (r n2))
+          (exp (G n) (g n) (r n3)));
+     msg (exp (G n) (g n) (r n4))]) in H6.
+simpl in H6.
+apply H6.
+simpl in ifbr.
+rewrite IFSAME_M with (b:= (fmb4 (g n) (exp (G n) (g n) (r n1))
+            (exp (G n) (g n) (r n2))
+            (exp (G n) (g n) (r n3)))) (x:=  (exp (G n) (g n) (r n4))) in ifbr.
+apply RESTR1 with (n:= 5) (m:=1) (x:=  (bol
+        (fmb4 (g n) (exp (G n) (g n) (r n1))
+           (exp (G n) (g n) (r n2))
+           (exp (G n) (g n) (r n3)))))  (l1:= [msg (G n); msg (g n);
+        msg (exp (G n) (g n) (r n1));
+        msg (exp (G n) (g n) (r n2));
+        msg (exp (G n) (g n) (r n3))]) (l2:= [msg
+          (if_then_else_M
+             (fmb4 (g n) (exp (G n) (g n) (r n1))
+                (exp (G n) (g n) (r n2))
+                (exp (G n) (g n) (r n3)))
+             (exp (G n) (exp (G n) (g n) (r n1)) (r n2))
+             (exp (G n) (exp (G n) (g n) (r n2)) (r n3)))]) (l1':= [msg (G n); msg (g n);
+       msg (exp (G n) (g n) (r n1));
+       msg (exp (G n) (g n) (r n2));
+       msg (exp (G n) (g n) (r n3))]) (y:=  (bol
+        (fmb4 (g n) (exp (G n) (g n) (r n1))
+           (exp (G n) (g n) (r n2))
+           (exp (G n) (g n) (r n3))))) (l2':= [msg (exp (G n) (g n) (r n4))]) in ifbr.
+
+simpl in ifbr.
+apply ifbr.
+Qed.
+
+
+

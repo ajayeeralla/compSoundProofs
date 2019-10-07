@@ -1,0 +1,222 @@
+Load "Pi1" .
+
+(*******************tactics *************************)
+(**************************application **************************)
+Ltac redg := try rewrite IFTRUE_M ; try rewrite IFFALSE_M ; try rewrite IFSAME_M ;try rewrite IFTRUE_B ; try rewrite IFFALSE_B ; try rewrite IFSAME_B.
+
+Ltac red_in H:= try rewrite IFTRUE_M in H; try rewrite IFFALSE_M in H; try rewrite IFSAME_M in H;try rewrite IFTRUE_B in H; try rewrite IFFALSE_B in H; try rewrite IFSAME_B in H.
+(***********unfold****************)
+
+Ltac unf_phi := try unfold phi0, phi1, phi2, phi3, phi4, phi21, phi22, phi23, phi24 ; try unfold  phi31, phi32, phi33, phi34, phi41, phi42, phi43, phi44.
+Ltac unf_trm:=  try unfold  t12, t13,t14, t15,t25, t35, t45.
+
+Ltac unf_qa := try unfold  qa00, qa10, qa01; try unfold qa10_s, qa01_s; try unfold qa10_ss, qa01_ss; try unfold qa20, qa11, qa02; try unfold qa20_s, qa11_s, qa02_s;  try unfold qa30, qa21,  qa12. 
+ 
+Ltac unf_qb :=  try unfold qb21, qb12, qb20_s, qb11_s, qb02_s; try unfold qb10_ss, qb01_ss.
+Ltac unf_qc :=   try unfold qc21, qc12, qc20_s, qc11_s, qc02_s; try unfold qc10_ss, qc01_ss.
+Ltac unf_qd :=   try unfold qd21, qd12, qd20_s, qd11_s, qd02_s; try unfold qd10_ss, qd01_ss.
+Ltac unf := try unf_phi; try unf_trm; try unf_qa ; try unf_qb; try unf_qc; try unf_qd.
+(************rewrite hypothesis************)
+
+Ltac rew_clear H := rewrite H ; simpl; clear H.
+Ltac rew_clear_in H H1:= rewrite H in H1; simpl in  H1 ;clear H .
+(*****************************Forall elimination ***************************)
+Ltac fall_elm_in n1 b1 H := try apply Forall_ELM_EVAL_B with (n:= n1) (b:= b1) in H;  try apply Forall_ELM_EVAL_M with (n:= n1) (x:= b1) in H; simpl in H; try rewrite H.
+ 
+
+Ltac fall_elm n1 b1  :=  try apply Forall_ELM_EVAL_B with (n:= n1) (b:= b1) ;  try apply Forall_ELM_EVAL_M with (n:= n1) (x:= b1) ;  simpl.
+Print IFEVAL_M.
+
+
+
+(*******************& elimination *******************)
+Ltac andB_elm_msg n1 t1 t2  := pose proof( mor_eval_andB n1 t1 t2) ;
+match goal with
+| [H : ?X # ?Y |- _ ] =>    simpl in H ; match goal with | [H : ?X # ?Y |- _ ] =>   rewrite H; clear H end
+         
+ end.
+
+
+
+Ltac andB_elm_msg_in n1 t1 t2 H1 := pose proof( mor_eval_andB n1 t1 t2) ;
+match goal with
+| [H : ?X # ?Y |- _ ] =>    simpl in H ; rewrite H in H1; clear H 
+         
+ end.
+
+
+
+
+Ltac rew_andB_elm_msg :=
+repeat match goal with 
+|[H: _ |-  context [(if_then_else_M  ((Bvar ?n2) & ?P) ?X ?Y )] ] => andB_elm_msg n2 X Y 
+end.
+
+
+
+Ltac rew_andB_elm_in_msg H1 := 
+repeat match goal with
+ |[H: context [(if_then_else_M ((Bvar ?n2) & ?P) ?X ?Y )] |- _ ] =>  andB_elm_msg_in n2 X Y H1 end.
+
+
+(***********************not sure if we require them*****)
+
+
+Ltac andB_elm_bol n1 t1 t2  := pose proof( mor_eval_andB n1 t1 t2) ;
+match goal with
+| [H : ?X # ?Y |- _ ] =>    simpl in H ;  match goal with | [H : ?X # ?Y |- _ ] =>   rewrite H; clear H end
+          
+ end.
+
+Ltac  andB_elm_bol_in n1 t1 t2 H1  := pose proof( mor_eval_andB n1 t1 t2) ;
+match goal with
+| [H : ?X # ?Y |- _ ] =>    simpl in H ;    rewrite H in H1; clear H 
+           
+ end.
+
+Ltac rew_andB_elm_bol :=
+repeat match goal with 
+|[H: _ |-  context [(if_then_else_B ((Bvar ?n2) & ?P) ?X ?Y )] ] => andB_elm_bol  n2 X Y 
+end.
+
+
+Ltac rew_andB_elm_in_bol H1 := 
+repeat match goal with
+ |[H: context [(if_then_else_B ((Bvar ?n2) & ?P) ?X ?Y )] |- _ ] =>  andB_elm_bol_in n2 X Y H1 end.
+
+(******************************************IFTF***********************************)
+
+
+
+Ltac rew_IFTF b  := pose proof(IFTFb b); 
+ match goal with
+| [H : _ |- ?X ## ?Y ] =>  rewrite H ; clear H; simpl
+ end.
+
+Ltac rew_IFTF_in b H1  := pose proof(IFTFb b);
+match goal with
+  | [H : ?X ## ?Y |- _ ] =>   rewrite H in H1 ; clear H; simpl in H1
+                             
+ end.
+
+
+
+Ltac rew_IFTF_all_in H1  := 
+repeat match goal with 
+|[ H : context [  (if_then_else_B ?X TRue FAlse)]   |- _ ] => rew_IFTF_in X H1 
+end. 
+
+
+
+Ltac rew_IFTF_all  := 
+repeat match goal with 
+|[ H : _ |-  context [ if_then_else_B ?X TRue FAlse ]  ] => rew_IFTF X 
+end. 
+
+
+
+
+(*************IFMORPH*****message_bool*******)
+
+Ltac ifmor_msg_bol n1 b1 b2 t1 t2  := pose proof(IFMORPH_M2 n1 b1 b2 t1 t2);
+
+match goal with
+| [H : _ |-  ?X # ?Y ] =>    simpl in H ; match goal with | [H : ?X # ?Y |- _ ] =>   rewrite H; clear H end
+         
+ end.
+Ltac ifmor_msg_bol_in n1 b1 b2 t1 t2 H1 := pose proof(IFMORPH_M2 n1 b1 b2 t1 t2);
+
+match goal with
+| [H : ?X # ?Y |- _ ] =>    simpl in H ; match goal with | [H : ?X # ?Y |- _ ] =>   rewrite H in H1; clear H end
+         
+ end.
+
+
+Ltac rew_ifmor_msg_bol :=
+repeat match goal with 
+|[ H : _ |-  context [ if_then_else_M (if_then_else_B (Bvar ?n1) ?Y ?Z) ?P ?Q]  ] => ifmor_msg_bol n1 Y Z P Q
+end. 
+
+Ltac rew_ifmor_msg_bol_in H1 :=
+repeat match goal with 
+|[ H : context [ if_then_else_M (if_then_else_B (Bvar ?n1) ?Y ?Z) ?P ?Q]   |- _ ] => ifmor_msg_bol_in n1 Y Z P Q H1
+end. 
+
+
+(********************IFMRPH***********Bool_Bool_fst*****************)
+
+Ltac ifmor_bol_bol_fst n1 b1 b2 b3 b4  := pose proof(IFMORPH_B2 n1 b1 b2 b3 b4);
+match goal with
+| [H :_ |-  ?X ## ?Y ] =>    simpl in H ; match goal with | [H : ?X ## ?Y |- _ ] =>   rewrite H; clear H end
+         
+ end.
+Ltac ifmor_bol_bol_fst_in  n1 b1 b2 b3 b4 H1 := pose proof(IFMORPH_B2 n1 b1 b2 b3 b4);
+match goal with
+| [H : ?X ## ?Y |- _ ] =>    simpl in H ; match goal with | [H : ?X ## ?Y |- _ ] =>   rewrite H in H1; clear H end
+   
+ end.
+
+
+Ltac rew_ifmor_bol_bol_fst :=
+repeat match goal with 
+|[ H : _ |-  context [ if_then_else_B (if_then_else_B (Bvar ?n1) ?Y ?Z) ?P ?Q]  ] =>  ifmor_bol_bol_fst n1 Y Z P Q
+end. 
+
+Ltac rew_ifmor_bol_bol_in_fst H1 :=
+repeat match goal with 
+|[ H : context [ if_then_else_B (if_then_else_B (Bvar ?n1) ?Y ?Z) ?P ?Q]   |- _ ] =>  ifmor_bol_bol_fst_in n1 Y Z P Q H1
+end. 
+
+
+(********************IFMRPH***********Bool_Bool_snd*****************)
+
+Ltac ifmor_bol_bol_snd n1 n2 b1 b2 b3  := pose proof(IFMORPH_B1 n1 n2 b1 b2 b3 );
+match goal with
+| [H : _ |- ?X ## ?Y ] =>    simpl in H ; match goal with | [H : ?X ## ?Y |- _ ] =>   rewrite H; clear H end
+         
+ end.
+Ltac ifmor_bol_bol_snd_in  n1 n2 b1 b2 b3  H1 := pose proof(IFMORPH_B1 n1 n2 b1 b2 b3 );
+match goal with
+| [H : ?X ## ?Y |- _ ] =>    simpl in H ; match goal with | [H : ?X ## ?Y |- _ ] =>   rewrite H in H1; clear H end
+   
+ end.
+
+
+Ltac rew_ifmor_bol_bol_snd :=
+repeat match goal with 
+|[ H : _ |-  context [ if_then_else_B (Bvar ?n1) (if_then_else_B (Bvar ?n2) ?B1 ?B2) ?B3 ]  ] =>  ifmor_bol_bol_snd n1 n2 B1 B2 B3
+end. 
+
+Ltac rew_ifmor_bol_bol_in_snd H1 :=
+repeat match goal with 
+|[ H : context [ (if_then_else_B (Bvar ?n1) (if_then_else_B (Bvar ?n2) ?B1 ?B2) ?B3)]   |- _ ] =>  ifmor_bol_bol_snd_in n1 n2 B1 B2 B3 H1
+end. 
+
+
+
+(*****************************************************Testing************)
+  
+ 
+
+
+
+
+
+ Ltac aply_assoc :=
+match goal with 
+| [ |- context [(?B1 & ?B2 ) & ?B3 ] ] => pose proof (andB_assoc B1 B2 B3); 
+match goal with
+| [ H :  context [(?B1 & ?B2 ) & ?B3 ]  |- _ ] => rewrite H ; clear H
+end
+end.
+Ltac aply_comm :=
+match goal with 
+| [ |- context [(?B1 & ?B2 ) ] ] => pose proof (andB_comm B1 B2 ); 
+match goal with
+| [ H :  context [(?B1 & ?B2 ) ]  |- _ ] => rewrite H
+end
+end.
+Axiom IFMORPH_M2':  forall  ( b b1 b2 : Bool) (y z : message),
+      (if_then_else_M (if_then_else_B b b1 b2) y z)
+      # (if_then_else_M b (if_then_else_M b1 y z)
+           (if_then_else_M b2 y z)).
